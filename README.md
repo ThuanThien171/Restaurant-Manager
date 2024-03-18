@@ -30,7 +30,7 @@
 ##### 2. The "npm i" command will read .json package and automatically install. After installing, try "npm start"
 ```
  .../reactjs $ npm start 
-
+...
 ##### 3. Then, install the widget modules for "server" folder
 ```
  ... $ cd /server
@@ -45,10 +45,11 @@
 ##### 5. Migrate DB 
 ```
  .../server $ npx sequelize-cli db:migrate
-
+...
  ##### 6. Then start your xampp database. Finally, try "npm run dev" 
+ ...
   .../server $ npm run dev
-
+...
   ### II. Some images about this project
 <p align="center">
   <p align="center">
@@ -85,6 +86,8 @@
   Responsive  
   </p>
 
-  <img src="" width="100%" />
+  <img src="https://github.com/ThuanThien171/Restaurant-Manager/blob/4ae26207924907eb0d19605c3383f0e54eb27fc3/image/menu-mobile.png" width="30%" />
+  <img src="https://github.com/ThuanThien171/Restaurant-Manager/blob/4ae26207924907eb0d19605c3383f0e54eb27fc3/image/order-mobile.png" width="30%" />
+  <img src="https://github.com/ThuanThien171/Restaurant-Manager/blob/4ae26207924907eb0d19605c3383f0e54eb27fc3/image/table-mobile.png" width="30%" />
 </p>
 
