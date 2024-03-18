@@ -63,7 +63,7 @@ function Kitchen() {
 	const updateItem = async (id) => {
 		const res = await axios.post("/api/updateItem", { id: id });
 		if (res.data.errCode === 0) {
-			document.getElementById(id).remove();
+			getKitchenInfo();
 			swal({
 				title: "Ok!",
 				text: "Thành công",
@@ -77,7 +77,7 @@ function Kitchen() {
 		//document.getElementById(id).remove();
 		const res = await axios.post("/api/deleteItem", { id: id });
 		if (res.data.errCode === 0) {
-			document.getElementById(id).remove();
+			getKitchenInfo();
 			swal({
 				title: "Ok!",
 				text: "Thành công",
