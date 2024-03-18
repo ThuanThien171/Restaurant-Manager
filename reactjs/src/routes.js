@@ -1,0 +1,223 @@
+// import
+import Dashboard from "views/Dashboard/Dashboard.js";
+import MenuManage from "views/RTL/Admin/Manage/MenuManage.js";
+import AreaManage from "views/RTL/Admin/Manage/AreaManage.js";
+import History from "views/Pages/History";
+import StorageManage from "views/RTL/Admin/Manage/StorageManage.js";
+import BusinessChart from "views/RTL/Admin/Manage/ArtistManage";
+import SuperAdmin from "views/RTL/SuperAdmin/S_Admin.js";
+import Table from "views/Pages/Table";
+import Menu from "views/Pages/Menu";
+import Kitchen from "views/Pages/Kitchen";
+
+import Profile from "views/Dashboard/Profile.js";
+import SignIn from "views/Pages/SignIn.js";
+import SignUp from "views/Pages/SignUp.js";
+
+import {
+	TimeIcon,
+	PlusSquareIcon,
+	CopyIcon,
+	DragHandleIcon,
+	EditIcon,
+
+} from "@chakra-ui/icons"
+import {
+	StatsIcon,
+	HomeIcon,
+	PersonIcon,
+	DocumentIcon,
+	RocketIcon,
+	SupportIcon,
+} from "components/Icons/Icons";
+
+var dashRoutes = [
+	{
+		path: "/home",
+		name: "Order",
+		rtlName: "لوحة القيادة",
+		icon: <EditIcon color="inherit" />,
+		component: Dashboard,
+		layout: "/resmat",
+		logout: "none",
+		user: "block",
+		chef: "none",
+		admin: "block",
+		superAdmin: "block",
+	},
+	{
+		path: "/table",
+		name: "Bàn",
+		rtlName: "لوحة القيادة",
+		icon: <DragHandleIcon color="inherit" />,
+		component: Table,
+		layout: "/resmat",
+		logout: "none",
+		user: "block",
+		chef: "none",
+		admin: "block",
+		superAdmin: "block",
+	},
+	{
+		path: "/menu",
+		name: "Menu",
+		rtlName: "لوحة القيادة",
+		icon: <CopyIcon color="inherit" />,
+		component: Menu,
+		layout: "/resmat",
+		logout: "none",
+		user: "block",
+		chef: "none",
+		admin: "block",
+		superAdmin: "block",
+	},
+	{
+		path: "/kitchen",
+		name: "Bếp",
+		rtlName: "لوحة القيادة",
+		icon: <PlusSquareIcon color="inherit" />,
+		component: Kitchen,
+		layout: "/resmat",
+		logout: "none",
+		user: "none",
+		chef: "block",
+		admin: "block",
+		superAdmin: "block",
+	},
+	{
+		path: "/signin",
+		name: "Đăng nhập",
+		rtlName: "لوحة القيادة",
+		icon: <DocumentIcon color="inherit" />,
+		component: SignIn,
+		layout: "/auth",
+		logout: "block",
+		user: "none",
+		chef: "none",
+		admin: "none",
+		superAdmin: "none",
+	},
+	{
+		path: "/signup",
+		name: "Đăng ký",
+		rtlName: "لوحة القيادة",
+		icon: <RocketIcon color="inherit" />,
+		secondaryNavbar: true,
+		component: SignUp,
+		layout: "/auth",
+		logout: "block",
+		user: "none",
+		chef: "none",
+		admin: "none",
+		superAdmin: "none",
+	},
+	{
+		name: "Quản lý",
+		category: "account",
+		rtlName: "صفحات",
+		state: "pageCollapse",
+		logout: "none",
+		user: "block",
+		chef: "block",
+		admin: "block",
+		superAdmin: "block",
+		views: [
+			{
+				path: "/profile",
+				name: "Profile",
+				rtlName: "لوحة القيادة",
+				icon: <PersonIcon color="inherit" />,
+				secondaryNavbar: true,
+				component: Profile,
+				layout: "/resmat",
+				logout: "none",
+				user: "block",
+				chef: "block",
+				admin: "block",
+				superAdmin: "block",
+			},
+			{
+				path: "/history",
+				name: "Lịch sử",
+				rtlName: "لوحة القيادة",
+				icon: <TimeIcon color="inherit" />,
+				component: History,
+				layout: "/resmat",
+				logout: "none",
+				user: "block",
+				chef: "block",
+				admin: "block",
+				superAdmin: "block",
+			},
+
+			{
+				path: "/chart",
+				name: "Biểu đồ & Chi tiêu",
+				rtlName: "لوحة القيادة",
+				icon: <StatsIcon color="inherit" />,
+				component: BusinessChart,
+				layout: "/resmat",
+				logout: "none",
+				user: "none",
+				chef: "none",
+				admin: "block",
+				superAdmin: "block",
+			},
+
+			{
+				path: "/manage-staff_manager",
+				name: "Quản lý nhân viên",
+				rtlName: "لوحة القيادة",
+				icon: <SupportIcon color="inherit" />,
+				component: SuperAdmin,
+				layout: "/resmat",
+				logout: "none",
+				user: "none",
+				chef: "none",
+				admin: "none",
+				superAdmin: "block",
+			},
+			{
+				path: "/manage-menu",
+				name: "Quản lý Menu",
+				rtlName: "لوحة القيادة",
+				icon: <SupportIcon color="inherit" />,
+				component: MenuManage,
+				layout: "/resmat",
+				logout: "none",
+				user: "none",
+				chef: "none",
+				admin: "block",
+				superAdmin: "block",
+			},
+			{
+				path: "/manage-area",
+				name: "Quản lý Khu & Bàn",
+				rtlName: "لوحة القيادة",
+				icon: <SupportIcon color="inherit" />,
+				component: AreaManage,
+				layout: "/resmat",
+				logout: "none",
+				user: "none",
+				chef: "none",
+				admin: "block",
+				superAdmin: "block",
+			},
+
+			{
+				path: "/manage-storage",
+				name: "Kho & Nguyên liệu",
+				rtlName: "لوحة القيادة",
+				icon: <SupportIcon color="inherit" />,
+				component: StorageManage,
+				layout: "/resmat",
+				logout: "none",
+				user: "none",
+				chef: "none",
+				admin: "block",
+				superAdmin: "block",
+			},
+		],
+	},
+];
+export default dashRoutes;
