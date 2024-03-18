@@ -23,6 +23,7 @@
  
 ##### 1. After cloning this project from github, you should install the widget modules for "reactjs" folder 
 ```
+
  ... $ cd /reactjs
  .../reactjs $ npm i
 ```
@@ -80,7 +81,7 @@
   Kitchen  
   </p>
 
-  <img src="" width="100%" />
+  <img src="https://github.com/ThuanThien171/Restaurant-Manager/blob/adeebf77a14bf67206393536cf113fa5e369e3ea/image/kitchen.png" width="100%" />
   <br />
   <p align="center">
   Staff management  
