@@ -30,7 +30,7 @@
 ##### 2. The "npm i" command will read .json package and automatically install. After installing, try "npm start"
 ```
  .../reactjs $ npm start 
-...
+```
 ##### 3. Then, install the widget modules for "server" folder
 ```
  ... $ cd /server
@@ -45,11 +45,11 @@
 ##### 5. Migrate DB 
 ```
  .../server $ npx sequelize-cli db:migrate
-...
+```
  ##### 6. Then start your xampp database. Finally, try "npm run dev" 
- ...
+```
   .../server $ npm run dev
-...
+```
   ### II. Some images about this project
 <p align="center">
   <p align="center">
