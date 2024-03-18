@@ -85,9 +85,10 @@
   <p align="center">
   Responsive  
   </p>
-
+<div>
   <img src="https://github.com/ThuanThien171/Restaurant-Manager/blob/4ae26207924907eb0d19605c3383f0e54eb27fc3/image/menu-mobile.png" width="30%" />
   <img src="https://github.com/ThuanThien171/Restaurant-Manager/blob/4ae26207924907eb0d19605c3383f0e54eb27fc3/image/order-mobile.png" width="30%" />
   <img src="https://github.com/ThuanThien171/Restaurant-Manager/blob/4ae26207924907eb0d19605c3383f0e54eb27fc3/image/table-mobile.png" width="30%" />
+</div>
 </p>
 
