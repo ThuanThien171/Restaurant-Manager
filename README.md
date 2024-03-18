@@ -59,28 +59,34 @@
   <img src="https://github.com/ThuanThien171/Restaurant-Manager/blob/master/image/chart.png" width="100%" />
   <br />
   <p align="center">
-  Home Page 2  
+  Order
+  </p>
+
+  <img src="https://github.com/ThuanThien171/Restaurant-Manager/blob/94ce4a8ad000ba6ed247ae9ee3fc7ed7f77d527f/image/order.png" width="100%" />
+  <br />
+  <p align="center">
+  Menu
+  </p>
+
+  <img src="https://github.com/ThuanThien171/Restaurant-Manager/blob/94ce4a8ad000ba6ed247ae9ee3fc7ed7f77d527f/image/menu.png" width="100%" />
+  <br />
+  <p align="center">
+  Table
+  </p>
+
+  <img src="https://github.com/ThuanThien171/Restaurant-Manager/blob/94ce4a8ad000ba6ed247ae9ee3fc7ed7f77d527f/image/table.png" width="100%" />
+  <br />
+  <p align="center">
+  Kitchen  
   </p>
 
   <img src="" width="100%" />
   <br />
   <p align="center">
-  Comments  
+  Staff management  
   </p>
 
-  <img src="" width="100%" />
-  <br />
-  <p align="center">
-  Playlist  
-  </p>
-
-  <img src="" width="100%" />
-  <br />
-  <p align="center">
-  Management  
-  </p>
-
-  <img src="" width="100%" />
+  <img src="https://github.com/ThuanThien171/Restaurant-Manager/blob/94ce4a8ad000ba6ed247ae9ee3fc7ed7f77d527f/image/staff-manage.png" width="100%" />
   <br />
   <p align="center">
   Responsive  
