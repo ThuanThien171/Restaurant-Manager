@@ -14,7 +14,7 @@ let sequelize;
 const customizeConfig = {
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
-  dialect: 'postgres',
+  dialect: 'mysql',
   logging: false,
   dialectOptions:
     process.env.DB_SSL === 'true' ?
@@ -25,9 +25,7 @@ const customizeConfig = {
         }
       } : {}
   ,
-  query: {
-    "raw": true
-  },
+
   timezone: "+07:00"
 }
 
