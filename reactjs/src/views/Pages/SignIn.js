@@ -17,7 +17,7 @@ import {
 import { useState } from "react";
 import axios from "axios";
 import swal from "sweetalert";
-import { useHistory } from "react-router-dom";
+import { useHistory, ReactRouterLink } from "react-router-dom";
 
 // Assets
 import signInImage from "assets/img/signInImage.png";
@@ -82,7 +82,7 @@ function SignIn() {
 	};
 
 	return (
-		<Flex position="relative" mb="40px">
+		<Flex position="relative" mb="120px">
 			<Flex
 				h={{ sm: "initial", md: "75vh", lg: "85vh" }}
 				w="100%"
@@ -201,6 +201,7 @@ function SignIn() {
 							<Text color={textColor} fontWeight="medium">
 								Không có tài khoản?
 								<Link
+									onClick={() => { history.push("/auth/signup"); }}
 									color={titleColor}
 									as="span"
 									ms="5px"

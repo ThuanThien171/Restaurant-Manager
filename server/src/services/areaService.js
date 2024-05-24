@@ -12,7 +12,7 @@ let getAllArea = (id) => {
                 attributes: {
                     exclude: ['createdAt', 'updatedAt'],
                     include: [
-                        [sequelize.fn('COUNT', sequelize.col('tables.id')), 'totalTable'],
+                        [sequelize.fn('COUNT', sequelize.col('Tables.id')), 'totalTable'],
                     ]
 
                 },

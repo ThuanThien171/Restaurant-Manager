@@ -144,7 +144,7 @@ let updateMenu = (data) => {
             let result = {};
             let sameNameInRes = "";
             if (data.menuName != "") {
-                sameNameInRes = await db.sequelize.query('SELECT * FROM menus WHERE restaurantID = :id AND menuName = :name AND menuName REGEXP BINARY :name',
+                sameNameInRes = await db.sequelize.query('SELECT * FROM Menus WHERE restaurantID = :id AND menuName = :name ',
                     {
                         replacements: { id: data.restaurantID, name: data.menuName },
                         type: QueryTypes.SELECT

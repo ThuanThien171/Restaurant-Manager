@@ -13,8 +13,8 @@ let getAllStorageInfo = (id) => {
                 attributes: {
                     exclude: ['createdAt', 'updatedAt'],
                     include: [
-                        [sequelize.fn('sum', sequelize.col('storages.importValue')), 'totalValue'],
-                        [sequelize.fn('sum', sequelize.col('storages.materialCost')), 'totalCost'],
+                        [sequelize.fn('sum', sequelize.col('Storages.importValue')), 'totalValue'],
+                        [sequelize.fn('sum', sequelize.col('Storages.materialCost')), 'totalCost'],
                     ]
                 },
                 include: [{
@@ -26,18 +26,18 @@ let getAllStorageInfo = (id) => {
                 raw: true,
                 nest: true
             })
-            // for (let i = 0; i < materials.length; i++) {
-            //     let usedItem = await getUsedMaterial(materials[i].id);
-            //     //console.log(usedItem);
-            //     if (usedItem.data[0] != undefined) {
-            //         for (let j = 0; j < usedItem.data.length; j++) {
-            //             //console.log(usedItem.data[j].totalNumber);
-            //             if (usedItem.data[j].totalNumber != undefined)
-            //                 materials[i].totalValue -= usedItem.data[j].costValue * usedItem.data[j].totalNumber
-            //             //usedItem.data[j].costValue * usedItem.data[j].totalNumber
-            //         }
-            //     }
-            // }
+            for (let i = 0; i < materials.length; i++) {
+                let usedItem = await getUsedMaterial(materials[i].id);
+                //console.log(usedItem);
+                if (usedItem.data[0] != undefined) {
+                    for (let j = 0; j < usedItem.data.length; j++) {
+                        //console.log(usedItem.data[j].totalNumber);
+                        if (usedItem.data[j].totalNumber != undefined)
+                            materials[i].totalValue -= usedItem.data[j].costValue * usedItem.data[j].totalNumber
+                        //usedItem.data[j].costValue * usedItem.data[j].totalNumber
+                    }
+                }
+            }
             result.errCode = 0;
             result.errMessage = "OK!";
             result.data = materials;
@@ -171,19 +171,19 @@ let addStorage = (storage) => {
             });
 
 
-            let material = await db.Material.findOne({
-                where: { id: storage.materialID, }
-            })
-            if (material) {
+            // let material = await db.Material.findOne({
+            //     where: { id: storage.materialID, }
+            // })
+            // if (material) {
 
-                let updateMenu = await db.Menu.findAll({
-                    where: { status: 2, restaurantID: material.restaurantID }
-                }).then((items) => {
-                    items.forEach((t) => {
-                        t.update({ status: 1 });
-                    });
-                });
-            }
+            //     let updateMenu = await db.Menu.findAll({
+            //         where: { status: 2, restaurantID: material.restaurantID }
+            //     }).then((items) => {
+            //         items.forEach((t) => {
+            //             t.update({ status: 1 });
+            //         });
+            //     });
+            // }
             result.errCode = 0;
             result.errMessage = "OK!";
 

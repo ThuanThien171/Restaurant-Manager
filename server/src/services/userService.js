@@ -64,7 +64,7 @@ let handleSignup = (data) => {
             let user = await db.User.findOne({
                 where: { phone: data.phone }
             })
-            let resInfo = await db.sequelize.query('SELECT * FROM restaurants WHERE restaurantName = :name AND restaurantName REGEXP BINARY :name',
+            let resInfo = await db.sequelize.query('SELECT * FROM Restaurants WHERE restaurantName = :name ',
                 {
                     replacements: { name: data.restaurantName },
                     type: QueryTypes.SELECT
