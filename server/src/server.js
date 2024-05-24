@@ -8,7 +8,7 @@ const cors = require('cors');
 
 const app = express();
 const port = process.env.PORT || 5555;
-const hostname = process.env.HOST_NAME;
+//const hostname = process.env.HOST_NAME;
 
 //CORS
 // app.use(cors({ credentials: true, origin: true }));
@@ -45,6 +45,6 @@ configView(app);
 app.use('/', webRoute);
 
 
-app.listen(port, hostname, () => {
-    console.log(`Server running at http://${hostname}:${port}/`); //call back
+app.listen(port, () => {
+    console.log(`Server running at http://${port}/`); //call back
 });
