@@ -31,6 +31,7 @@ import actionAddMenu from "redux/actions/actionAddMenu";
 
 // Axios
 import axios from "axios";
+import swal from "sweetalert";
 
 
 export default function StaffTask() {
@@ -85,6 +86,39 @@ export default function StaffTask() {
 
 	const updateStaftTask = async () => {
 		console.log(staffTask);
+		if(!staffTask.userID) {
+			return swal({
+				title: "Lỗi!",
+				text: "Chưa chọn nhân viên",
+				icon: "error",	
+				button: "OK!",
+			})	
+		}
+		if(staffTask.userID === -1) {
+			const res = await axios.post("/api/deleteStaffTask", {resID: userInfo.restaurantID, tableID: staffTask.tableID});
+			if (res.data.errCode === 0) {
+				setAreas(res.data.areas);
+				onClose();
+				return swal({
+					title: "OK!",
+					text: "Xóa nhiệm vụ thành công",
+					icon: "success",	
+					button: "OK!",
+				})
+			}
+		}else {
+			const res = await axios.post("/api/updateStaffTask", {resID: userInfo.restaurantID,  staffTask});
+			if (res.data.errCode === 0) {
+				setAreas(res.data.areas);
+				onClose();
+				return swal({
+					title: "OK!",
+					text: "Thêm nhiệm vụ thành công",
+					icon: "success",	
+					button: "OK!",
+				})
+			}
+		}
 	}
 
 	return (

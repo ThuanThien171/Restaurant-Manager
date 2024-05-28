@@ -315,6 +315,59 @@ let getAvailableTable = (id) => {
     })
 }
 
+let deleteStaffTask = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let result = {};
+            let task = await db.StaffTask.findOne({
+                where: { tableID: data.tableID },
+            })
+            await task.destroy();
+            let areas = await getAvailableTable(data.resID);
+            result.errCode = 0;
+            result.errMessage = "OK!";
+            result.data = areas.data ? areas.data : {};
+            resolve(result);
+            
+
+        } catch (e) {
+            reject(e);
+        }
+    })
+}
+
+let updateStaffTask = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let result = {};
+            let task = await db.StaffTask.findOne({
+                where: { tableID: data.staffTask.tableID },
+            })
+            if(task){
+                task.userID = data.staffTask.userID;
+                await task.save();
+            }else {
+                await db.StaffTask.create({
+                    tableID: data.staffTask.tableID,
+                    userID: data.staffTask.userID,
+                })
+            }
+            let areas = await getAvailableTable(data.resID);
+            result.errCode = 0;
+            result.errMessage = "OK!";
+            result.data = areas.data ? areas.data : {};
+            resolve(result);
+            
+
+        } catch (e) {
+            reject(e);
+        }
+    })
+}
+
 module.exports = {
-    getAllArea, deleteOneArea, postNewArea, getOneAreaInfo, changeNameArea, changeNameTable, deleteTable, addTable, getAvailableTable
+    getAllArea, deleteOneArea, postNewArea, 
+    getOneAreaInfo, changeNameArea, changeNameTable, 
+    deleteTable, addTable, getAvailableTable,
+    deleteStaffTask, updateStaffTask,
 };

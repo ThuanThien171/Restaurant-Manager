@@ -39,6 +39,8 @@ router.post('/api/changeNameTable', areaController.changeNameTable);
 router.post('/api/deleteTable', areaController.deleteTable);
 router.post('/api/addTable', areaController.addTable);
 router.post('/api/getAvailableTable', areaController.getAvailableTable);
+router.post('/api/deleteStaffTask', areaController.deleteStaffTask);
+router.post('/api/updateStaffTask', areaController.updateStaffTask);
 
 //menu api
 router.post('/api/getAllMenu', menuController.getAllMenu);
