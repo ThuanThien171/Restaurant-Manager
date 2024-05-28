@@ -2,8 +2,13 @@ import { Link, useHistory } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap-icons/font/bootstrap-icons.css'
+
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
+import bootstrap5Plugin from '@fullcalendar/bootstrap5';
+import interactionPlugin from '@fullcalendar/interaction'
 
 import axios from "axios";
 // Chakra imports
@@ -24,92 +29,77 @@ import {
     TableCaption,
     useColorMode,
     useColorModeValue,
+    Tabs,
+    TabList,
+    TabPanels,
+    Tab,
+    TabPanel,
+    useDisclosure,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalFooter,
+    ModalBody,
+    ModalCloseButton,
+    FormControl,
+    FormLabel,
+    Input,
 } from "@chakra-ui/react";
+import { AddIcon } from '@chakra-ui/icons'
 
 // Custom components
 import Card from "components/Card/Card.js";
 import CardBody from "components/Card/CardBody.js";
 import CardHeader from "components/Card/CardHeader.js";
+import { dA } from "@fullcalendar/core/internal-common";
+import swal from "sweetalert";
 
 export default function Dashboard() {
     // Chakra Color Mode
     const textColor = useColorModeValue("gray.700", "white");
     const history = useHistory();
-    const [artist, setArtist] = useState([]);
-    const [artistSong, getArtistSong] = useState([]);
     const userInfo = useSelector((state) => state.reducerLogin).userInfo;
     if (userInfo === undefined) {
-        history.push('/auth/signin/');
+        history.push('/auth/signin');
     }
-    useEffect(() => {
-        getAllArtistData();
-    }, [])
-    //Get artist data from database
-    const getAllArtistData = async () => {
-        const res = await axios.post("/api/getAllArtistInfo");
-        if (res.data.status === 200) {
-            setArtist(res.data.artists);
-        }
-        const res1 = await axios.post("/api/getSongNumberOfAnArtist");
-        if (res.data.status === 200) {
-            getArtistSong(res1.data.artistSong);
-        }
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const [shiftTime, setShiftTime] = useState({
+        start: "",
+        end: "",
+    });
+
+    const handleInput = (e) => {
+        e.persist();
+        setShiftTime({ ...shiftTime, [e.target.name]: e.target.value });
     }
-    for (let i = 0; i < artist.length; i++) {
-        if (artistSong !== undefined) {
-            for (let j = 0; j < artistSong.length; j++) {
-                if (artist[i].artistId === artistSong[j].artistId) {
-                    artist[i]["totalSong"] = artistSong[j].songNumber;
-                }
+
+    const addNewShift = async () => {
+        if (shiftTime.start == "" || shiftTime.end == "") {
+            swal("Error", "Thiếu dữ liệu nhập vào", "error");
+        } else {
+            const data = {
+                resID: userInfo.restaurantID,
+                time: shiftTime.start + "-" + shiftTime.end,
+            }
+            const res = await axios.post("/api/addNewShift", data);
+            if (res.data.errCode === 0) {
+                swal({
+                    title: "Thành công!",
+                    text: res.data.errMessage,
+                    icon: "success",
+                    button: "OK!",
+                });
+                setShiftTime({
+                    start: "",
+                    end: "",
+                });
+                onClose();
+
             }
         }
+    }
 
-    }
-    //Handle add new artist
-    const goToAddArtistPage = () => {
-        history.push('/resmat/add-artist');
-    }
-    //Handle update artist
-    const goToUpdateArtistPage = (event) => {
-        const artistCurrentId = event.target.value;
-        history.push('/resmat/update-artist/' + artistCurrentId);
-    }
-    //Handle delete artist
-    const handleDeleteArtist = (e, id) => {
-        e.preventDefault();
-        const thisClicked = e.currentTarget;
-        swal("Are you sure you to delete this artist?", {
-            buttons: {
-                cancel: "No",
-                catch: {
-                    text: "Yes",
-                    value: "catch",
-                },
-            },
-        })
-            .then((value) => {
-                switch (value) {
-                    case "cancel":
-                        break;
-                    case "catch":
-                        axios.post("/api/deleteOneArtist", { artistId: id });
-                        setTimeout(function () {
-                            swal({
-                                title: "Success!",
-                                text: "Delete Artist Successfully",
-                                icon: "success",
-                                button: "OK!",
-                            })
-                        }, 200);
-                        thisClicked.closest("tr").remove();
-
-                        // window.location.reload();
-                        break;
-                    default:
-                        break;
-                }
-            });
-    }
     return (
         <div style={{ margin: '60px 0px 0px 0px' }}>
             <Card overflowX={{ xl: "hidden" }}>
@@ -117,43 +107,100 @@ export default function Dashboard() {
                     <Text fontSize="xl" color={textColor} fontWeight="bold">
                         Lịch làm việc
                     </Text>
-                    <Button style={{ margin: "0 0 0 75%", 'borderRadius': "5px" }} colorScheme="blue" onClick={goToAddArtistPage}>Add artist
+                    <Button style={{ margin: "0 0 0 75%", 'borderRadius': "5px" }} colorScheme="blue" onClick={() => { onOpen(); }}><AddIcon color={"inherit"} />
                     </Button>
                 </CardHeader>
                 <CardBody>
-                    <div style={{
-                        width: "1100px",
-                        height: "800px",
-                        margin: "auto",
-                    }}>
-                        <FullCalendar
-                            // ref={calendarRef}
-                            locale="vi"
-                            headerToolbar={{
-                                start: false,
-                                center: 'title',
-                                end: 'today prev,next'
-                            }}
-                            buttonText={{ today: "hôm nay" }}
-                            plugins={[dayGridPlugin]}
-                            initialView="dayGridMonth"
-                            height={800}
-                        // themeSystem="bootstrap"
-                        // stickyHeaderDates={true}
-                        // editable={true}
-                        // selectable={true}
-                        // selectMirror
-                        // views={views}
-                        // select={ }
-                        // eventTimeFormat={eventTimeFormat}
-                        // eventClick={handleEventClick}
-                        // events={calendar}
-                        // buttonText={buttonText}
-                        // eventDrop={(e) => { return console.log("eventDrop ran======-----======", dispatch(calendarUpdate({ start: e.event.start, end: e.event.end, _id: e.event._def.extendedProps._id }))) }}
+                    <Tabs size="sm" colorScheme="cyan" width="100%" variant='enclosed' isFitted >
+                        <TabList>
+                            <Tab _focus={{ boxShadow: "none", }} >Lịch làm</Tab>
+                            <Tab _focus={{ boxShadow: "none", }} >Số giờ làm theo tháng</Tab>
+                        </TabList>
+                        <TabPanels>
+                            <TabPanel>
 
-                        />
-                    </div>
+                                <div style={{
+                                    width: "900px",
+                                    height: "800px",
+                                    margin: "auto",
+                                }}>
+                                    <FullCalendar
+                                        // ref={calendarRef}
+                                        locale="vi"
+                                        headerToolbar={{
+                                            start: false,
+                                            center: 'title',
+                                            end: 'today prev,next'
+                                        }}
+                                        buttonText={{ today: "hôm nay" }}
+                                        plugins={[dayGridPlugin, bootstrap5Plugin, interactionPlugin]}
+                                        initialView="dayGridMonth"
+                                        height={800}
+                                        themeSystem="bootstrap5"
+
+                                        // stickyHeaderDates={true}
+                                        editable={true}
+                                        selectable={true}
+                                        selectMirror
+                                    // views={views}
+                                    // select={ }
+                                    // eventTimeFormat={eventTimeFormat}
+                                    // eventClick={handleEventClick}
+                                    // events={calendar}
+                                    // buttonText={buttonText}
+                                    // eventDrop={(e) => { return console.log("eventDrop ran======-----======", dispatch(calendarUpdate({ start: e.event.start, end: e.event.end, _id: e.event._def.extendedProps._id }))) }}
+
+                                    />
+                                </div>
+                            </TabPanel>
+                            <TabPanel>
+
+                            </TabPanel>
+                        </TabPanels>
+                    </Tabs>
+
                 </CardBody>
+
+                <Modal
+                    //initialFocusRef={initialRef}
+                    isOpen={isOpen}
+                    onClose={onClose}
+                    isCentered
+                >
+                    <ModalOverlay />
+                    <ModalContent>
+                        <ModalHeader>Nhập thời gian làm việc</ModalHeader>
+                        <ModalCloseButton />
+                        <ModalBody pb={6}>
+                            <FormControl>
+                                <FormLabel>Thời gian bắt đầu</FormLabel>
+                                <Input
+                                    placeholder=""
+                                    name="start"
+                                    onChange={handleInput}
+                                    value={shiftTime.start}
+                                    type="time"
+                                />
+                            </FormControl>
+                            <FormControl>
+                                <FormLabel>Thời gian kết thúc</FormLabel>
+                                <Input
+                                    placeholder=""
+                                    name="end"
+                                    onChange={handleInput}
+                                    value={shiftTime.end}
+                                    type="time"
+                                />
+                            </FormControl>
+                        </ModalBody>
+                        <ModalFooter>
+                            <Button onClick={() => { addNewShift(); }} colorScheme="blue" mr={3}>
+                                Xác nhận
+                            </Button>
+                            <Button onClick={onClose}>Hủy</Button>
+                        </ModalFooter>
+                    </ModalContent>
+                </Modal>
             </Card>
         </div>
 

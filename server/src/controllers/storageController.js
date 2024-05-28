@@ -138,9 +138,19 @@ let deleteCost = async (req, res) => {
     })
 }
 
+let updateStorage = async (req, res) => {
+    let storage = await storageService.updateStorage(req.body.data);
+    let storageData = await storageService.getAllStorageInfo(req.body.id);
+    return res.status(200).json({
+        errCode: storage.errCode,
+        errMessage: storage.errMessage,
+        storages: storageData.data ? storageData.data : {}
+    })
+}
+
 module.exports = {
     getAllStorageInfo, deleteOneMaterial, updateMaterial,
     addMaterial, addStorage, getImportedInfo,
     deleteImported, getMaterial, getUsedMaterial,
-    getCostData, addNewCost, deleteCost
+    getCostData, addNewCost, deleteCost, updateStorage,
 };

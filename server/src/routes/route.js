@@ -61,6 +61,8 @@ router.post('/api/getUsedMaterial', storageController.getUsedMaterial);
 router.post('/api/getCostData', storageController.getCostData);
 router.post('/api/addNewCost', storageController.addNewCost);
 router.post('/api/deleteCost', storageController.deleteCost);
+router.post('/api/updateStorage', storageController.updateStorage);
+
 
 //order api
 router.post('/api/getOrderRealTime', orderController.getOrderRealTime);

@@ -239,7 +239,10 @@ export default function Genres() {
 												transform: "scale(.98)",
 											}}
 											as="button"
-											hidden={(table.status != 0 && hidden) && true}
+											hidden={hidden ? ((table.status != 0) && true):((userInfo.role == 0 && userInfo.id != table.StaffTask.userID) ? true : false)}
+											//{(table.status != 0 && hidden) && true}
+											//((userInfo.role == 0 && userInfo.id != table.StaffTask.userID) ? true : false)
+											//|| (userInfo.role == 0 && userInfo.id != table.StaffTask.userID)
 											onClick={() => { handleClick(table.id, table.status) }}
 										>
 

@@ -282,7 +282,22 @@ let getAvailableTable = (id) => {
                         attributes: {
                             exclude: ['createdAt', 'updatedAt'],
                         },
-                        raw: true
+                        include: [{
+                            model: db.StaffTask,
+                            attributes: {
+                                exclude: ['createdAt', 'updatedAt'],
+                            },
+                            include: {
+                                model: db.User,
+                                attributes: ['userName'],                            
+                            },
+                            nest:true,
+                            //separate: true
+                            //required: true
+                        }],
+                        group: ['id'],
+                        raw: true,
+                        nest: true
                     })
                 };
                 result.errCode = 0;

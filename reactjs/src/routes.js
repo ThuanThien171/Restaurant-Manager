@@ -4,11 +4,12 @@ import MenuManage from "views/RTL/Admin/Manage/MenuManage.js";
 import AreaManage from "views/RTL/Admin/Manage/AreaManage.js";
 import History from "views/Pages/History";
 import StorageManage from "views/RTL/Admin/Manage/StorageManage.js";
-import BusinessChart from "views/RTL/Admin/Manage/ArtistManage";
+import BusinessChart from "views/RTL/Admin/Manage/ChartPage.js";
 import SuperAdmin from "views/RTL/SuperAdmin/S_Admin.js";
 import Table from "views/Pages/Table";
 import Menu from "views/Pages/Menu";
 import Kitchen from "views/Pages/Kitchen";
+import StaffTask from "views/Pages/StaffTask";
 
 import Profile from "views/Dashboard/Profile.js";
 import SignIn from "views/Pages/SignIn.js";
@@ -20,6 +21,7 @@ import {
 	CopyIcon,
 	DragHandleIcon,
 	EditIcon,
+	CalendarIcon
 
 } from "@chakra-ui/icons"
 import {
@@ -133,6 +135,19 @@ var dashRoutes = [
 				logout: "none",
 				user: "block",
 				chef: "block",
+				admin: "block",
+				superAdmin: "block",
+			},
+			{
+				path: "/staff-assign",
+				name: "Phân công nhân viên",
+				rtlName: "لوحة القيادة",
+				icon: <CalendarIcon color="inherit" />,
+				component: StaffTask,
+				layout: "/resmat",
+				logout: "none",
+				user: "none",
+				chef: "none",
 				admin: "block",
 				superAdmin: "block",
 			},

@@ -201,7 +201,7 @@ function MaterialDetail() {
                                                     </Td>
                                                     <Td minWidth={{ sm: "200px" }}>
                                                         <Flex direction="column">
-                                                            <Text fontSize="lg" color={textColor} fontWeight="light">{data.note || "..."}</Text>
+                                                            <Text fontSize="lg" color={data.type == 0 ? textColor : "red.500"} fontWeight="light">{data.note || "..."}</Text>
                                                         </Flex>
                                                     </Td>
                                                     <Td>
