@@ -1,0 +1,29 @@
+{
+  "files": {
+    "main.css": "/Restaurant-Manager/static/css/main.4fe3bead.chunk.css",
+    "main.js": "/Restaurant-Manager/static/js/main.16dee266.chunk.js",
+    "main.js.map": "/Restaurant-Manager/static/js/main.16dee266.chunk.js.map",
+    "runtime-main.js": "/Restaurant-Manager/static/js/runtime-main.2bfdecf5.js",
+    "runtime-main.js.map": "/Restaurant-Manager/static/js/runtime-main.2bfdecf5.js.map",
+    "static/css/2.7c1bda0c.chunk.css": "/Restaurant-Manager/static/css/2.7c1bda0c.chunk.css",
+    "static/js/2.960bb021.chunk.js": "/Restaurant-Manager/static/js/2.960bb021.chunk.js",
+    "static/js/2.960bb021.chunk.js.map": "/Restaurant-Manager/static/js/2.960bb021.chunk.js.map",
+    "index.html": "/Restaurant-Manager/index.html",
+    "static/css/2.7c1bda0c.chunk.css.map": "/Restaurant-Manager/static/css/2.7c1bda0c.chunk.css.map",
+    "static/css/main.4fe3bead.chunk.css.map": "/Restaurant-Manager/static/css/main.4fe3bead.chunk.css.map",
+    "static/js/2.960bb021.chunk.js.LICENSE.txt": "/Restaurant-Manager/static/js/2.960bb021.chunk.js.LICENSE.txt",
+    "static/media/BgSignUp.2dea4acf.png": "/Restaurant-Manager/static/media/BgSignUp.2dea4acf.png",
+    "static/media/ProfileBackground.4dc796b0.png": "/Restaurant-Manager/static/media/ProfileBackground.4dc796b0.png",
+    "static/media/avatar1.eeef2af6.png": "/Restaurant-Manager/static/media/avatar1.eeef2af6.png",
+    "static/media/avatar2.5692c39d.png": "/Restaurant-Manager/static/media/avatar2.5692c39d.png",
+    "static/media/avatar3.9f646ac5.png": "/Restaurant-Manager/static/media/avatar3.9f646ac5.png",
+    "static/media/signInImage.2c7ddfe6.png": "/Restaurant-Manager/static/media/signInImage.2c7ddfe6.png"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.2bfdecf5.js",
+    "static/css/2.7c1bda0c.chunk.css",
+    "static/js/2.960bb021.chunk.js",
+    "static/css/main.4fe3bead.chunk.css",
+    "static/js/main.16dee266.chunk.js"
+  ]
+}
