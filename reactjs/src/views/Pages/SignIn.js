@@ -45,6 +45,15 @@ function SignIn() {
 		setState({ ...state, [e.target.name]: e.target.value });
 	};
 
+	const preLogin = (e) => {
+
+		if (state.phone.length < 10 || state.phone.length > 11 || state.phone[0] != 0 || state.phone.match(/\d/g).length != state.phone.length) {
+			swal("Error", "Số điện thoại không hợp lệ!", "error");
+		} else {
+			login(e);
+		}
+	}
+
 	const login = async (e) => {
 		e.preventDefault();
 		const data = {
@@ -66,7 +75,7 @@ function SignIn() {
 				dispatch(actionLogin(res.data.user));
 				history.push("/resmat");
 			} catch (err) {
-				swal("Error", err.message, "error");
+
 			}
 			setState({
 				phone: "",
@@ -117,7 +126,8 @@ function SignIn() {
 						>
 							Nhập sdt và mật khẩu để đăng nhập
 						</Text>
-						<FormControl onSubmit={login}>
+						<FormControl //onSubmit={(e) => { preLogin(e); }}
+						>
 							<FormLabel
 								ms="4px"
 								fontSize="sm"
@@ -126,12 +136,13 @@ function SignIn() {
 								Số điện thoại
 							</FormLabel>
 							<Input
+								id="phone"
 								name="phone"
 								borderRadius="15px"
 								mb="24px"
 								fontSize="sm"
-								type="number"
-								pattern="[0-9]"
+								type="tel"
+								//pattern="[0-9]"
 								required={true}
 								placeholder="Số điện thoại người dùng"
 								size="lg"
@@ -146,6 +157,7 @@ function SignIn() {
 								Mật khẩu
 							</FormLabel>
 							<Input
+								id="password"
 								name="password"
 								borderRadius="15px"
 								mb="36px"
@@ -172,7 +184,7 @@ function SignIn() {
 								</FormLabel>
 							</FormControl> */}
 							<Button
-								onClick={login}
+								onClick={(e) => { preLogin(e); }}
 								fontSize="10px"
 								type="submit"
 								bg="teal.300"

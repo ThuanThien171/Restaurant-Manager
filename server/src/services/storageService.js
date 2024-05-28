@@ -202,7 +202,7 @@ let getImportedInfo = (id) => {
                 order: [
                     ['createdAt', 'DESC'],
                 ],
-                where: { materialID: id, type: 0 },
+                where: { materialID: id },
             })
 
 
@@ -411,8 +411,35 @@ let deleteCost = (id) => {
     })
 }
 
+let updateStorage = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let result = {};
+            const promis = data.map( async (data)=> {
+                await db.Storage.create({
+                    materialID: data.id,
+                    importValue: parseFloat(data.value),
+                    materialCost: 0,
+                    type: 1,
+                    note: 'hao hụt'
+                });
+            })
+
+            await Promise.all(promis);
+
+            result.errCode = 0;
+            result.errMessage = "OK!";
+
+            resolve(result);
+        } catch (e) {
+            reject(e);
+        }
+    })
+}
+
 module.exports = {
     getAllStorageInfo, deleteOneMaterial, updateMaterial, addMaterial,
     addStorage, getImportedInfo, deleteImported, getMaterial,
-    checkStorage, getUsedMaterial, getCostData, addNewCost, deleteCost
+    checkStorage, getUsedMaterial, getCostData, addNewCost, deleteCost,
+    updateStorage,
 };

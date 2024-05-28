@@ -266,7 +266,8 @@ export default function Artist() {
                 >
                   <Image
                     w={"100%"}
-                    h={"full"}
+                    //h={"full"}
+                    style={{'aspect-ratio': '1 / 1' }}
                     //style={{ border: "1px outset #38B2AC" }}
                     src={(data.image != "") ? data.image : emptyImg}
                     objectFit={"fill"}

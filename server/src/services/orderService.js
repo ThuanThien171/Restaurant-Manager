@@ -776,6 +776,116 @@ let deleteOrder = (id) => {
     })
 }
 
+//sale
+let getSaleData = (resID, year) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let saleData = [];
+            for (let i = 1; i <= 12; i++) {
+                // lay data doanh thu
+                let totalSale = 0;
+                let orders = await db.Order.findAll({
+                    where: {
+                        restaurantID: resID,
+                        status: 1,
+                        [Op.and]: [
+                            //sequelize.fn(''),
+                            sequelize.where(sequelize.fn('MONTH', sequelize.fn('CONVERT_TZ', sequelize.col('updatedAt'), '+00:00', '+07:00')), i),
+                            sequelize.where(sequelize.fn('YEAR', sequelize.fn('CONVERT_TZ', sequelize.col('updatedAt'), '+00:00', '+07:00')), year),
+                        ],
+                    },
+                    raw: true,
+                })
+                for (let j = 0; j < orders.length; j++) {
+                    let orderPrice = await getTotalPrice(orders[j].id);
+                    totalSale += orderPrice;
+                }
+                saleData.push(totalSale);
+            }
+            resolve(saleData);
+        } catch (e) {
+            reject(e);
+        }
+    })
+}
+
+//material cost
+let getMaterialCostData = (resID, year) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let materialData = [];
+            for (let i = 1; i <= 12; i++) {
+                let totalMaterialCost = 0;
+                let materials = await db.Material.findAll({
+                    where: { restaurantID: resID },
+                    attributes: ['id', 'restaurantID'],
+                    raw: true,
+                })
+                for (let j = 0; j < materials.length; j++) {
+                    let importedData = await db.Storage.findAll({
+                        where: {
+                            materialID: materials[j].id,
+                            type: 0,
+                            [Op.and]: [
+                                //sequelize.fn(''),
+                                sequelize.where(sequelize.fn('MONTH', sequelize.fn('CONVERT_TZ', sequelize.col('updatedAt'), '+00:00', '+07:00')), i),
+                                sequelize.where(sequelize.fn('YEAR', sequelize.fn('CONVERT_TZ', sequelize.col('updatedAt'), '+00:00', '+07:00')), year),
+                            ],
+                        },
+                        attributes: [
+                            [sequelize.fn('sum', sequelize.col('materialCost')), 'totalCost'],
+
+                        ],
+                        group: "materialID",
+                        raw: true
+                    })
+                    if (importedData[0] != undefined)
+                        totalMaterialCost += parseInt(importedData[0].totalCost);
+                    //console.log(importedData)
+                }
+                materialData.push(totalMaterialCost);
+            }
+            resolve(materialData);
+        } catch (e) {
+            reject(e);
+        }
+    })
+}
+//other cost
+let getCostData = (resID, year) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let costData = [];
+            for (let i = 1; i <= 12; i++) {
+                let ortherCost = await db.Cost.findAll({
+                    where: {
+                        restaurantID: resID,
+                        [Op.and]: [
+                            //sequelize.fn(''),
+                            sequelize.where(sequelize.fn('MONTH', sequelize.fn('CONVERT_TZ', sequelize.col('updatedAt'), '+00:00', '+07:00')), i),
+                            sequelize.where(sequelize.fn('YEAR', sequelize.fn('CONVERT_TZ', sequelize.col('updatedAt'), '+00:00', '+07:00')), year),
+                        ],
+                    },
+                    attributes: [
+                        [sequelize.fn('sum', sequelize.col('fee')), 'totalFee'],
+
+                    ],
+                    group: "restaurantID",
+                    raw: true
+                })
+                if (ortherCost[0] != undefined) {
+                    costData.push(parseInt(ortherCost[0].totalFee));
+                } else {
+                    costData.push(0);
+                }
+            }
+            resolve(costData);
+        } catch (e) {
+            reject(e);
+        }
+    })
+}
+
 let getBarChartData = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -783,7 +893,9 @@ let getBarChartData = (data) => {
             let saleData = [];
             let materialData = [];
             let costData = [];
-            for (let i = 1; i <= 12; i++) {
+            let month = [1,2,3,4,5,6,7,8,9,10,11,12];
+
+            const promis = month.map(async (i) => {
                 // lay data doanh thu
                 let totalSale = 0;
                 let orders = await db.Order.findAll({
@@ -802,7 +914,7 @@ let getBarChartData = (data) => {
                     let orderPrice = await getTotalPrice(orders[j].id);
                     totalSale += orderPrice;
                 }
-                saleData.push(totalSale);
+                saleData[i] = totalSale;
 
 
                 //lay data chi phi nguyen lieu
@@ -834,7 +946,7 @@ let getBarChartData = (data) => {
                         totalMaterialCost += parseInt(importedData[0].totalCost);
                     //console.log(importedData)
                 }
-                materialData.push(totalMaterialCost);
+                materialData[i] = totalMaterialCost;
 
                 //lay data cac chi phi khac
                 let ortherCost = await db.Cost.findAll({
@@ -854,11 +966,16 @@ let getBarChartData = (data) => {
                     raw: true
                 })
                 if (ortherCost[0] != undefined) {
-                    costData.push(parseInt(ortherCost[0].totalFee));
+                    costData[i] = parseInt(ortherCost[0].totalFee);
                 } else {
-                    costData.push(0);
+                    costData[i] = 0;
                 }
-            }
+            })
+
+            await Promise.all(promis);
+            // let saleData = await getSaleData(data.resID, data.year);
+            // let materialData = await getMaterialCostData(data.resID, data.year);
+            // let costData = await getCostData(data.resID, data.year);
             result.errCode = 0;
             result.errMessage = "OK!";
             result.data = { saleData, materialData, costData };
@@ -932,12 +1049,11 @@ let getItemnumberIn7Day = (menuID, resID) => {
     return new Promise(async (resolve, reject) => {
         try {
             let result = [];
-
             for (let i = 6; i >= 0; i--) {
                 let date = new Date();
                 let predate = new Date();
+                
                 predate.setDate(date.getDate() - i);
-
                 let totalNumberInDay = 0;
 
                 let orders = await db.Order.findAll({
@@ -945,9 +1061,9 @@ let getItemnumberIn7Day = (menuID, resID) => {
                         status: 1,
                         restaurantID: resID,
                         [Op.and]: [
-                            sequelize.where(sequelize.fn('DAY', sequelize.fn('CONVERT_TZ', sequelize.col('updatedAt'), '+00:00', '+07:00')), predate.getDate()),
-                            sequelize.where(sequelize.fn('MONTH', sequelize.fn('CONVERT_TZ', sequelize.col('updatedAt'), '+00:00', '+07:00')), (predate.getMonth() + 1)),
-                            sequelize.where(sequelize.fn('YEAR', sequelize.fn('CONVERT_TZ', sequelize.col('updatedAt'), '+00:00', '+07:00')), predate.getFullYear()),
+                            sequelize.where(sequelize.fn('DAY',  sequelize.col('updatedAt')), predate.getDate()),
+                            sequelize.where(sequelize.fn('MONTH',  sequelize.col('updatedAt')), (predate.getMonth() + 1)),
+                            sequelize.where(sequelize.fn('YEAR', sequelize.col('updatedAt')), predate.getFullYear()),
                         ],
                     },
 

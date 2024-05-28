@@ -9,8 +9,9 @@ import AuthLayout from "layouts/Auth.js";
 import AdminLayout from "layouts/Admin.js";
 
 import axios from 'axios';
-axios.defaults.baseURL = "http://localhost:8080/";
-
+require('dotenv').config();
+//axios.defaults.baseURL = "http://localhost:8080/";
+axios.defaults.baseURL = process.env.REACT_APP_BE_URL;
 
 //local storage
 import { persistStore, persistReducer } from 'redux-persist';

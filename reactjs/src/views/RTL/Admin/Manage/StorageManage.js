@@ -73,10 +73,38 @@ export default function Dashboard() {
         note: ""
     });
 
+    const [updateStorage, setUpdateStorage] = useState([]);
+
     const handleInput = (e) => {
         e.persist();
         setNew({ ...addNew, [e.target.name]: e.target.value });
     };
+
+    const inputUpdateStorage = (id, value) => {
+        let m1 = material.filter((item) => item.id == id);
+        let m2 = updateStorage.filter((item) => item.id == id);
+
+        if (m2[0] == undefined) {
+            updateStorage.push({
+                id: id,
+                value: (parseFloat(value) - parseFloat(m1[0].totalValue)),
+            });
+            setUpdateStorage(updateStorage);
+        } else {
+            if (!value) {
+                let m3 = updateStorage.filter((item) => item.id != id);
+                console.log(m3);
+                setUpdateStorage(m3);
+            } else {
+                updateStorage.map((data) => {
+                    if (data.id == id) data.value = (parseFloat(value) - parseFloat(m1[0].totalValue));
+                })
+                setUpdateStorage(updateStorage);
+            }
+        }
+
+
+    }
 
     if (userInfo === undefined) {
         return (<Redirect to={'/auth/signin/'} />);
@@ -225,15 +253,34 @@ export default function Dashboard() {
                 }
             });
     }
+
+    const handleUpdateStorage = async () => {
+        console.log(updateStorage);
+        onClose();
+        const res = await axios.post("/api/updateStorage", { id: userInfo.restaurantID, data: updateStorage });
+        if (res.data.errCode === 0) {
+
+            setMaterial(res.data.storages);
+            swal({
+                title: "Thành công!",
+                text: "Nhập kho thành công",
+                icon: "success",
+                button: "OK!",
+            });
+
+        }
+    }
     return (
         <div style={{ margin: '60px 0px 0px 0px' }}>
             <Card overflowX={{ xl: "hidden" }}>
                 <CardHeader p="6px 0px 22px 0px" alignItems="Center" justifyContent="space-between">
 
                     <Text fontSize="2xl" color={textColor} fontWeight="bold">Kho</Text>
+                    <Flex>
+                        <Button style={{ margin: "5px", }} colorScheme="blue" onClick={(e) => { onOpen(); setStat(4); setUpdateStorage([]); }}>Kiểm kho</Button>
 
-                    <Button style={{ margin: "10px 10px 10px 20px", 'borderRadius': "5px" }} colorScheme="blue" onClick={(e) => { onOpen(); setStat(2); setNewName(""); setMeasure(""); }}>Thêm nguyên liệu</Button>
-
+                        <Button style={{ margin: "5px", }} colorScheme="blue" onClick={(e) => { onOpen(); setStat(2); setNewName(""); setMeasure(""); }}>Thêm nguyên liệu</Button>
+                    </Flex>
 
                 </CardHeader>
                 <CardBody style={{ overflow: "auto" }}>
@@ -398,6 +445,54 @@ export default function Dashboard() {
                                         </ModalBody>
                                         <ModalFooter>
                                             <Button onClick={handleChange} colorScheme="blue" mr={3}>
+                                                Xác nhận
+                                            </Button>
+                                            <Button onClick={onClose}>Hủy</Button>
+                                        </ModalFooter>
+                                    </ModalContent>
+                                </Modal>
+                            }
+                            {stat == 4 &&
+                                <Modal
+                                    initialFocusRef={initialRef}
+                                    isOpen={isOpen}
+                                    onClose={onClose}
+                                    isCentered
+                                    blockScrollOnMount={true}
+                                >
+                                    <ModalOverlay />
+                                    <ModalContent>
+                                        <ModalHeader>Kiểm kho</ModalHeader>
+                                        <ModalCloseButton />
+                                        <ModalBody pb={6}>
+                                            {material.map((data, index) => {
+                                                return (
+                                                    <FormControl>
+
+                                                        <Flex style={{ 'align-items': ' center' }} p="3px" key={index}>
+                                                            <Text w={"15%"} alignItems={"center"}>{data.materialName}</Text>
+                                                            <Input
+                                                                // style={{ 'max-width': '300px' }}
+                                                                w="70%"
+                                                                ref={initialRef}
+                                                                placeholder="Nhập số lượng còn lại."
+                                                                name="importValue"
+                                                                onChange={(e) => { inputUpdateStorage(data.id, e.target.value) }}
+                                                                type="number"
+                                                                pattern={"[0-9]*[.,]?[0-9]"}
+                                                                step="0.01"
+                                                                min="0"
+
+                                                            />
+                                                            <Text w="15%" style={{ margin: "5px", 'font-size': '20px' }} display={"flex"} alignItems="center" justifyContent={"center"}>{data.measure}</Text>
+                                                        </Flex>
+                                                    </FormControl>
+                                                )
+                                            })}
+
+                                        </ModalBody>
+                                        <ModalFooter>
+                                            <Button onClick={() => { handleUpdateStorage(); }} colorScheme="blue" mr={3}>
                                                 Xác nhận
                                             </Button>
                                             <Button onClick={onClose}>Hủy</Button>

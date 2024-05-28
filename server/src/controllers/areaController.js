@@ -112,4 +112,29 @@ let getAvailableTable = async (req, res) => {
     })
 }
 
-module.exports = { getAllArea, deleteOneArea, postNewArea, getOneAreaInfo, changeNameArea, changeNameTable, deleteTable, addTable, getAvailableTable };
+let deleteStaffTask = async (req, res) => {
+    let areaData = await areaService.deleteStaffTask(req.body);
+
+    return res.status(200).json({
+        errCode: areaData.errCode,
+        errMessage: areaData.errMessage,
+        areas: areaData.data ? areaData.data : {}
+    })
+}
+
+let updateStaffTask = async (req, res) => {
+    let areaData = await areaService.updateStaffTask(req.body);
+
+    return res.status(200).json({
+        errCode: areaData.errCode,
+        errMessage: areaData.errMessage,
+        areas: areaData.data ? areaData.data : {}
+    })
+}
+
+module.exports = { 
+    getAllArea, deleteOneArea, postNewArea, 
+    getOneAreaInfo, changeNameArea, changeNameTable, 
+    deleteTable, addTable, getAvailableTable,
+    deleteStaffTask, updateStaffTask,
+};

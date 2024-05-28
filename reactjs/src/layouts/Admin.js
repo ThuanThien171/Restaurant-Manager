@@ -29,7 +29,7 @@ import MaterialDetail from "views/RTL/Admin/Update/MaterialDetail";
 import MenuManage from "views/RTL/Admin/Manage/MenuManage";
 import SuperAdmin from "views/RTL/SuperAdmin/S_Admin.js";
 import AreaManage from "views/RTL/Admin/Manage/AreaManage.js";
-import BusinessChart from "views/RTL/Admin/Manage/ArtistManage";
+import BusinessChart from "views/RTL/Admin/Manage/ChartPage.js";
 import Order from "views/Pages/Order";
 import OrderHistory from "views/Pages/OrderHistory";
 import StorageManage from "views/RTL/Admin/Manage/StorageManage";
