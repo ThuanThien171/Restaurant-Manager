@@ -118,7 +118,7 @@ export default function HeaderLinks(props) {
 				//logo={logo}
 				{...rest}
 			/>
-			<SettingsIcon
+			{/* <SettingsIcon
 				cursor="pointer"
 				ms={{ base: "16px", xl: "0px" }}
 				me="16px"
@@ -163,7 +163,7 @@ export default function HeaderLinks(props) {
 						</MenuItem>
 					</Flex>
 				</MenuList>
-			</Menu>
+			</Menu> */}
 		</Flex>
 	);
 }
