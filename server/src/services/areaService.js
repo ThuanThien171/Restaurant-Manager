@@ -322,7 +322,9 @@ let deleteStaffTask = (data) => {
             let task = await db.StaffTask.findOne({
                 where: { tableID: data.tableID },
             })
+            if(task) {
             await task.destroy();
+            }
             let areas = await getAvailableTable(data.resID);
             result.errCode = 0;
             result.errMessage = "OK!";

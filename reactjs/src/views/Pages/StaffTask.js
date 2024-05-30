@@ -40,6 +40,8 @@ export default function StaffTask() {
 	const iconUrl = "https://firebasestorage.googleapis.com/v0/b/thienproject-2a65d.appspot.com/o/Images%2Ficon%2Ftable.PNG?alt=media&token=5c49e9ba-9df2-4a03-94a8-b1aed269d10b";
 	const [areas, setAreas] = useState([]);
 	const [staffs, setStaffs] = useState([]);
+	const [check, setCheck] = useState(true);
+	const [inUsed, setInUsed] = useState(false);
 	const [staffTask, setStaffTask] = useState({
 		userID: null,
 		tableID: null,
@@ -76,16 +78,29 @@ export default function StaffTask() {
         }
     }
 
-	const handleClick = (tableID, StaffTask) => {
+	const handleClick = (tableID, StaffTask, status) => {
 		setStaffTask({
 			userID: StaffTask.userID,
 			tableID,
 		})
+		if(StaffTask.userID != null) setCheck(false);
+		else setCheck(true);
+
+		if(status === 1) setInUsed(true);
+		else setInUsed(false);
+
 		onOpen();
 	}
 
 	const updateStaftTask = async () => {
-		console.log(staffTask);
+		if(inUsed) {
+			return swal({
+				title: "Lỗi!",
+				text: "Bàn đang được dùng!",
+				icon: "error",	
+				button: "OK!",
+			})	
+		}
 		if(!staffTask.userID) {
 			return swal({
 				title: "Lỗi!",
@@ -166,7 +181,7 @@ export default function StaffTask() {
 											}}
 											as="button"
 
-											onClick={() => { handleClick(table.id,table.StaffTask) }}
+											onClick={() => { handleClick(table.id,table.StaffTask,table.status) }}
 										>
 
 											<Flex
@@ -229,7 +244,7 @@ export default function StaffTask() {
 													}}
 													placeholder={'Chọn nhân viên phụ trách'}
                                                 >
-													<option value={-1} hidden={!staffTask.userID && true}>{'>>> Hủy <<<'}</option>
+													<option value={-1} hidden={check}>{'>>> Hủy <<<'}</option>
 													{staffs.map(data => {
 														return (
 															<option value={data.id} >{data.userName}</option>
