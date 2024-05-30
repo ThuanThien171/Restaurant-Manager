@@ -19,7 +19,14 @@ let getOrderRealTime = (id) => {
                 include: [{
                     model: db.Table,
                     as: 'Table',
-                    attributes: [],
+                    attributes:['id', 'tableName'],
+                    include: [{
+                        model: db.StaffTask,
+                        as: 'StaffTask',
+                        attributes: ['tableID', 'userID'],
+                    }],
+                    nest: true,
+                    raw: true,
                     // required: true
                 },
                 ],

@@ -89,6 +89,7 @@ export default function Dashboard() {
 								borderRadius="10px"
 								as="button"
 								key={index}
+								hidden={(data.Table.StaffTask.userID !== userInfo.id && userInfo.role ===0) && true}
 								m={"5px 0px"}
 								onClick={() => { handleClick(data.tableID) }}
 							>
