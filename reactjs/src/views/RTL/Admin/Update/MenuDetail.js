@@ -92,7 +92,7 @@ function MenuDetail() {
 
     //Handle back button
     const goToMenuPage = () => {
-        history.push('/resmat/manage-menu');
+        history.push('/remat/manage-menu');
     }
 
     const handleUploadMenu = async () => {
@@ -152,8 +152,8 @@ function MenuDetail() {
                 button: "OK!",
             })
                 .then((value) => {
-                    //return (<Redirect to={'/resmat/menu-detail/:id'} />);
-                    history.push('/resmat/manage-menu');
+                    //return (<Redirect to={'/remat/menu-detail/:id'} />);
+                    history.push('/remat/manage-menu');
                 });
 
         } else {

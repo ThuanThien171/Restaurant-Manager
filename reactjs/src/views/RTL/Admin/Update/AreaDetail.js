@@ -90,7 +90,7 @@ function AreaDetail() {
 
     //Handle back button
     const goToManageAreaPage = () => {
-        history.push('/resmat/manage-area');
+        history.push('/remat/manage-area');
     }
 
     //Handle update album

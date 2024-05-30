@@ -73,7 +73,7 @@ function SignIn() {
 				else if (res.data.user.role === 3)
 					dispatch(actionUpdateSidebar("superAdmin"));
 				dispatch(actionLogin(res.data.user));
-				history.push("/resmat");
+				history.push("/remat");
 			} catch (err) {
 
 			}

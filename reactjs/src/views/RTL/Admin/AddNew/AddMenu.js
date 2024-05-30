@@ -72,7 +72,7 @@ function AddMenu() {
 
     //Handle back button
     const goToMenuPage = () => {
-        history.push('/resmat/manage-menu');
+        history.push('/remat/manage-menu');
     }
 
     //Handle upload song
@@ -132,8 +132,8 @@ function AddMenu() {
                 button: "OK!",
             })
                 .then((value) => {
-                    return (<Redirect to={'/resmat/manage-menu'} />);
-                    //history.push('/resmat/manage-menu');
+                    return (<Redirect to={'/remat/manage-menu'} />);
+                    //history.push('/remat/manage-menu');
                 });
 
         } else {

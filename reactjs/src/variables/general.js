@@ -311,7 +311,7 @@ export const songData = [
 ];
 export const songs = [
 
-  { songName: "Lỡ như anh yêu em", singer: "Chi dân", album: "30", genres: "VPop", filePath: "./songs/1.mp3", time: "04:13", coverPath: "https://firebasestorage.googleapis.com/v0/b/resmat-645aa.appspot.com/o/Images%2FSongImages%2F1.png?alt=media&token=6e85865e-73a6-44eb-bdba-d484113ed349" },
+  { songName: "Lỡ như anh yêu em", singer: "Chi dân", album: "30", genres: "VPop", filePath: "./songs/1.mp3", time: "04:13", coverPath: "https://firebasestorage.googleapis.com/v0/b/remat-645aa.appspot.com/o/Images%2FSongImages%2F1.png?alt=media&token=6e85865e-73a6-44eb-bdba-d484113ed349" },
   { songName: "Cielo - Huma-Huma", singer: "adele", filePath: "./songs/2.mp3", coverPath: "./covers/2.jpg" },
   { songName: "DEAF KEV - Invincible [NCS Release]-320k", singer: "adele", filePath: "./songs/3.mp3", coverPath: "./covers/3.jpg" },
   { songName: "Different Heaven & EH!DE - My Heart [NCS Release]", singer: "adele", filePath: "./songs/4.mp3", coverPath: "./covers/4.jpg" },

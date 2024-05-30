@@ -217,7 +217,7 @@ export default function Dashboard() {
     //Handle update material
     const goToMaterialDetail = (genreCurrentId) => {
         // const genreCurrentId = event.target.value;
-        history.push('/resmat/material-detail/' + genreCurrentId);
+        history.push('/remat/material-detail/' + genreCurrentId);
     }
     //Handle delete material
     const handleDeleteMaterial = (id) => {

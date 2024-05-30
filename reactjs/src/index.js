@@ -37,8 +37,8 @@ ReactDOM.render(
       <PersistGate loading={<Switch />} persistor={persistor}>
         <Switch>
           <Route path={`/auth`} component={AuthLayout} />
-          <Route path={`/resmat`} component={AdminLayout} />
-          <Redirect from={`/`} to="/resmat/home" />
+          <Route path={`/remat`} component={AdminLayout} />
+          <Redirect from={`/`} to="/remat/home" />
         </Switch>
 
       </PersistGate>

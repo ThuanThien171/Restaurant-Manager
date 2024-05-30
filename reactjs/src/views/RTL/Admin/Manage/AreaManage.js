@@ -105,7 +105,7 @@ export default function Dashboard() {
     //Handle update area
     const goToUpdateAreaPage = (areaCurrentId) => {
         // const areaCurrentId = event.target.value;
-        history.push('/resmat/area-detail/' + areaCurrentId);
+        history.push('/remat/area-detail/' + areaCurrentId);
     }
     //Handle delete area
     const handleDeleteArea = (id) => {
