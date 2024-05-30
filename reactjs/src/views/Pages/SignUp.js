@@ -81,9 +81,9 @@ function SignUp() {
 				dispatch(actionLogin(res.data.user));
 				swal(
 					"Thành công!",
-					"Chào mừng tới ResMaT, " + res.data.user.userName + "!",
+					"Chào mừng tới ReMaT, " + res.data.user.userName + "!",
 					"success"
-				).then(() => history.push("/resmat"));
+				).then(() => history.push("/remat"));
 			} catch (err) {
 				swal("Error", err.message, "error");
 			}

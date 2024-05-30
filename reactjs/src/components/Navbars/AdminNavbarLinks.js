@@ -96,7 +96,7 @@ export default function HeaderLinks(props) {
 					</Button>
 				</NavLink>
 			) : (
-				<NavLink to="/resmat/profile">
+				<NavLink to="/remat/profile">
 					<Button
 						ms="0px"
 						px="0px"

@@ -101,7 +101,7 @@ export default function OrderHistory() {
 								icon: "success",
 								button: "OK!",
 							}).then(() => {
-								history.push('/resmat/history');
+								history.push('/remat/history');
 							})
 						}
 						break;

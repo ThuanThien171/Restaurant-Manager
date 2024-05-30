@@ -43,10 +43,10 @@ export default function Dashboard(props) {
   const mainPanel = React.createRef();
   // functions for changing the states from components
   const getRoute = () => {
-    return window.location.pathname !== "/resmat/full-screen-maps";
+    return window.location.pathname !== "/remat/full-screen-maps";
   };
   const getActiveRoute = (routes) => {
-    let activeRoute = "ResMaT";
+    let activeRoute = "ReMaT";
     for (let i = 0; i < routes.length; i++) {
       if (routes[i].collapse) {
         let collapseActiveRoute = getActiveRoute(routes[i].views);
@@ -98,7 +98,7 @@ export default function Dashboard(props) {
       if (prop.category === "account") {
         return getRoutes(prop.views);
       }
-      if (prop.layout === "/resmat") {
+      if (prop.layout === "/remat") {
         return (
           <Route
             path={prop.layout + prop.path}
@@ -118,7 +118,7 @@ export default function Dashboard(props) {
     <ChakraProvider theme={theme} resetCss={false}>
       <Sidebar
         routes={routes}
-        logoText={"ResMaT"}
+        logoText={"ReMaT"}
         display="none"
         sidebarVariant={sidebarVariant}
         {...rest}
@@ -133,7 +133,7 @@ export default function Dashboard(props) {
         <Portal>
           <AdminNavbar
             onOpen={onOpen}
-            logoText={"ResMaT"}
+            logoText={"ReMaT"}
             brandText={getActiveRoute(routes)}
             secondary={getActiveNavbar(routes)}
             fixed={fixed}
@@ -145,28 +145,28 @@ export default function Dashboard(props) {
             <PanelContainer>
               <Switch>
                 {getRoutes(routes)}
-                <Route path={`/resmat/history`} component={History} />
-                <Route path={`/resmat/kitchen`} component={Kitchen} />
-                <Route path={`/resmat/table`} component={Table} />
-                <Route path={`/resmat/order/:tableID`} component={Order} />
-                <Route path={`/resmat/menu`} component={Menu} />
-                <Route path={`/resmat/order-history/:id`} component={OrderHistory} />
+                <Route path={`/remat/history`} component={History} />
+                <Route path={`/remat/kitchen`} component={Kitchen} />
+                <Route path={`/remat/table`} component={Table} />
+                <Route path={`/remat/order/:tableID`} component={Order} />
+                <Route path={`/remat/menu`} component={Menu} />
+                <Route path={`/remat/order-history/:id`} component={OrderHistory} />
 
-                <Route path={`/resmat/add-menu`} component={AddMenu} />
+                <Route path={`/remat/add-menu`} component={AddMenu} />
 
-                <Route path={`/resmat/menu-detail/:id`} component={MenuDetail} />
-                <Route path={`/resmat/area-detail/:id`} component={AreaDetail} />
-                <Route path={`/resmat/material-detail/:id`} component={MaterialDetail} />
+                <Route path={`/remat/menu-detail/:id`} component={MenuDetail} />
+                <Route path={`/remat/area-detail/:id`} component={AreaDetail} />
+                <Route path={`/remat/material-detail/:id`} component={MaterialDetail} />
 
-                <Route path={`/resmat/manage-menu`} component={MenuManage} />
-                <Route path={`/resmat/manage-area`} component={AreaManage} />
-                <Route path={`/resmat/chart`} component={BusinessChart} />
-                <Route path={`/resmat/manage-storage`} component={StorageManage} />
+                <Route path={`/remat/manage-menu`} component={MenuManage} />
+                <Route path={`/remat/manage-area`} component={AreaManage} />
+                <Route path={`/remat/chart`} component={BusinessChart} />
+                <Route path={`/remat/manage-storage`} component={StorageManage} />
 
-                <Route path={`/resmat/Manage-user`} component={SuperAdmin} />
+                <Route path={`/remat/Manage-user`} component={SuperAdmin} />
 
                 {/* Add route here */}
-                <Redirect from="/resmat" to="/resmat/home" />
+                <Redirect from="/remat" to="/remat/home" />
               </Switch>
             </PanelContainer>
           </PanelContent>

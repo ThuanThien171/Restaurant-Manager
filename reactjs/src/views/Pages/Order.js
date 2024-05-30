@@ -113,7 +113,7 @@ export default function Order() {
 									icon: "success",
 									button: "OK!",
 								}).then(() => {
-									history.push('/resmat/home');
+									history.push('/remat/home');
 								})
 							}
 							break;
@@ -157,7 +157,7 @@ export default function Order() {
 									icon: "success",
 									button: "OK!",
 								}).then(() => {
-									history.push('/resmat/home');
+									history.push('/remat/home');
 								})
 							}
 							break;
@@ -185,7 +185,7 @@ export default function Order() {
 				icon: "success",
 				button: "OK!",
 			}).then(() => {
-				history.push('/resmat/home');
+				history.push('/remat/home');
 			})
 		}
 	}
@@ -278,7 +278,7 @@ export default function Order() {
 
 	const handleGoBack = () => {
 
-		history.push('/resmat/home')
+		history.push('/remat/home')
 	}
 
 
@@ -293,7 +293,7 @@ export default function Order() {
 					action: role,
 				}));
 
-				history.push('/resmat/menu');
+				history.push('/remat/menu');
 				break;
 
 
@@ -305,7 +305,7 @@ export default function Order() {
 					action: role,
 				}));
 
-				history.push('/resmat/table');
+				history.push('/remat/table');
 
 				break;
 
@@ -335,7 +335,7 @@ export default function Order() {
 									action: role,
 								}));
 
-								history.push('/resmat/table');
+								history.push('/remat/table');
 								break;
 							default:
 								break;

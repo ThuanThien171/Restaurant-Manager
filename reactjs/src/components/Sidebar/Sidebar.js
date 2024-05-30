@@ -282,7 +282,7 @@ function Sidebar(props) {
 	var brand = (
 		<Box pt={"25px"} mb="12px">
 			<Link
-				onClick={() => history.push("/resmat/home")}
+				onClick={() => history.push("/remat/home")}
 				target="_blank"
 				display="flex"
 				lineHeight="100%"
@@ -537,7 +537,7 @@ export function SidebarResponsive(props) {
 	var brand = (
 		<Box pt={"35px"} mb="8px">
 			<Link
-				onClick={() => history.push("/resmat/home")}
+				onClick={() => history.push("/remat/home")}
 				target="_blank"
 				display="flex"
 				lineHeight="100%"

@@ -70,7 +70,7 @@ export default function Genres() {
 						icon: "success",
 						button: "OK!",
 					}).then(() => {
-						history.push('/resmat/home');
+						history.push('/remat/home');
 					})
 				} else {
 					swal({
@@ -81,7 +81,7 @@ export default function Genres() {
 					})
 				}
 			} else {
-				history.push('/resmat/order/' + id);
+				history.push('/remat/order/' + id);
 			}
 		} else {
 			let role = (orderInfo.action != undefined) ? orderInfo.action : "addNewOrder"
@@ -94,7 +94,7 @@ export default function Genres() {
 							tableID: id,
 							action: role,
 						}));
-						history.push('/resmat/menu');
+						history.push('/remat/menu');
 					} else {
 						const res = await axios.post('/api/addNewOrder', {
 							resID: userInfo.restaurantID,
@@ -112,7 +112,7 @@ export default function Genres() {
 								icon: "success",
 								button: "OK!",
 							}).then(() => {
-								history.push('/resmat/home');
+								history.push('/remat/home');
 							})
 						} else {
 							swal({
@@ -135,7 +135,7 @@ export default function Genres() {
 							icon: "success",
 							button: "OK!",
 						}).then(() => {
-							history.push('/resmat/home');
+							history.push('/remat/home');
 						})
 					} else {
 						swal({
@@ -165,7 +165,7 @@ export default function Genres() {
 							icon: "success",
 							button: "OK!",
 						}).then(() => {
-							history.push('/resmat/home');
+							history.push('/remat/home');
 						})
 					} else {
 						swal({
@@ -193,7 +193,7 @@ export default function Genres() {
 	const handleGoBack = () => {
 		dispatch(actionAddOrder(0));
 
-		history.push('/resmat/home')
+		history.push('/remat/home')
 	}
 
 	return (

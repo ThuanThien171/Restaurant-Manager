@@ -296,7 +296,7 @@ function Profile() {
 	const logout = () => {
 		dispatch(actionUpdateSidebar("logout"));
 		dispatch(actionLogout());
-		history.push("/resmat/home");
+		history.push("/remat/home");
 	};
 
 	return (

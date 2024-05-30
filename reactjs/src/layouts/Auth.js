@@ -18,7 +18,7 @@ export default function Pages(props) {
     return function cleanup() { };
   });
   const getActiveRoute = (routes) => {
-    let activeRoute = "ResMaT";
+    let activeRoute = "ReMaT";
     for (let i = 0; i < routes.length; i++) {
       if (routes[i].collapse) {
         let collapseActiveRoute = getActiveRoute(routes[i].views);
@@ -89,7 +89,7 @@ export default function Pages(props) {
         <Portal containerRef={navRef}>
           <AuthNavbar
             secondary={getActiveNavbar(routes)}
-            logoText="ResMaT"
+            logoText="ReMaT"
           />
         </Portal>
         <Box w="100%">

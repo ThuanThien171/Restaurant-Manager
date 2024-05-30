@@ -57,12 +57,12 @@ export default function Dashboard() {
   }
   //Handle add new menu
   const goToAddMenuPage = () => {
-    history.push('/resmat/add-menu');
+    history.push('/remat/add-menu');
   }
   //Handle update menu
   const goToUpdateMenuPage = (event) => {
     const menuCurrentId = event.target.value;
-    history.push('/resmat/menu-detail/' + menuCurrentId);
+    history.push('/remat/menu-detail/' + menuCurrentId);
   }
   // Handle delete menu
   const handleDeleteMenu = (id) => {

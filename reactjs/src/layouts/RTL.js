@@ -24,10 +24,10 @@ export default function Dashboard(props) {
   // ref for main panel div
   const mainPanel = React.createRef();
   const getRoute = () => {
-    return window.location.pathname !== "/resmat/full-screen-maps";
+    return window.location.pathname !== "/remat/full-screen-maps";
   };
   const getActiveRoute = (routes) => {
-    let activeRoute = "ResMaT";
+    let activeRoute = "ReMaT";
     for (let i = 0; i < routes.length; i++) {
       if (routes[i].collapse) {
         let collapseActiveRoute = getActiveRoute(routes[i].views);
@@ -78,7 +78,7 @@ export default function Dashboard(props) {
       if (prop.category === "account") {
         return getRoutes(prop.views);
       }
-      if (prop.layout === "/rtl" || prop.layout === "/resmat") {
+      if (prop.layout === "/rtl" || prop.layout === "/remat") {
         return (
           <Route
             path={prop.layout + prop.path}
@@ -99,7 +99,7 @@ export default function Dashboard(props) {
       <RtlProvider>
         <Sidebar
           routes={routes}
-          logoText={"ResMaT"}
+          logoText={"ReMaT"}
           display="none"
           sidebarVariant={sidebarVariant}
           {...rest}
@@ -115,7 +115,7 @@ export default function Dashboard(props) {
           <Portal>
             <AdminNavbar
               onOpen={onOpen}
-              logoText={"ResMaT"}
+              logoText={"ReMaT"}
               brandText={getActiveRoute(routes)}
               secondary={getActiveNavbar(routes)}
               fixed={fixed}

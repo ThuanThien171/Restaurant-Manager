@@ -71,7 +71,7 @@ export default function AuthNavbar(props) {
   }
   var brand = (
     <Link
-      onClick={() => history.push("/resmat/home")}
+      onClick={() => history.push("/remat/home")}
       target="_blank"
       display="flex"
       lineHeight="100%"
@@ -88,7 +88,7 @@ export default function AuthNavbar(props) {
   );
   var linksAuth = (
     <HStack display={{ sm: "none", lg: "flex" }}>
-      <NavLink to="/resmat/home">
+      <NavLink to="/remat/home">
         <Button
           fontSize="sm"
           ms="0px"
@@ -102,7 +102,7 @@ export default function AuthNavbar(props) {
           <Text>Dashboard</Text>
         </Button>
       </NavLink>
-      {/* <NavLink to="/resmat/profile">
+      {/* <NavLink to="/remat/profile">
         <Button
           fontSize="sm"
           ms="0px"

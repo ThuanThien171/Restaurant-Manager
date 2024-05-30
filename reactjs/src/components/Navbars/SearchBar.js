@@ -103,16 +103,16 @@ function SearchBar(props) {
     }
     //Go page
     const goToSongPage = (k) => {
-        history.push("/resmat/song/" + k);
+        history.push("/remat/song/" + k);
     }
     const goToArtistPage = (k) => {
-        history.push("/resmat/artist/" + k);
+        history.push("/remat/artist/" + k);
     }
     const goToAlbumPage = (k) => {
-        history.push("/resmat/album/" + k);
+        history.push("/remat/album/" + k);
     }
     const goToGenrePage = (k) => {
-        history.push("/resmat/genres/" + k);
+        history.push("/remat/genres/" + k);
     }
 
     const handleOnFocus = () => {

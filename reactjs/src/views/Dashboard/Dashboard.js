@@ -35,7 +35,7 @@ export default function Dashboard() {
 		// history.push('/auth/signin/');
 	}
 	if (userInfo.role == 1) {
-		return (<Redirect to={'/resmat/kitchen'} />);
+		return (<Redirect to={'/remat/kitchen'} />);
 		// history.push('/auth/signin/');
 	}
 
@@ -55,12 +55,12 @@ export default function Dashboard() {
 	};
 
 	const handleClick = (id) => {
-		history.push('/resmat/order/' + id);
+		history.push('/remat/order/' + id);
 	}
 
 	const handleAddOrder = () => {
-		//return (<Redirect to={'/resmat/genres/' + 1} />);
-		history.push('/resmat/table')
+		//return (<Redirect to={'/remat/genres/' + 1} />);
+		history.push('/remat/table')
 	}
 
 	return (

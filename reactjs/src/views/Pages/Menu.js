@@ -101,7 +101,7 @@ export default function Artist() {
 
   const handleGoBack = () => {
     dispatch(actionAddMenu(0));
-    history.push('/resmat/home')
+    history.push('/remat/home')
   }
 
 
@@ -117,7 +117,7 @@ export default function Artist() {
         if (orderInfo.tableID == undefined) {
           if (addedMenus[0] != undefined) {
             dispatch(actionAddMenu(addedMenus));
-            history.push('/resmat/table');
+            history.push('/remat/table');
           }
         } else {
           const res = await axios.post('/api/addNewOrder', {
@@ -136,7 +136,7 @@ export default function Artist() {
               icon: "success",
               button: "OK!",
             }).then(() => {
-              history.push('/resmat/home');
+              history.push('/remat/home');
             })
           } else {
             swal({
@@ -163,7 +163,7 @@ export default function Artist() {
               icon: "success",
               button: "OK!",
             }).then(() => {
-              history.push('/resmat/home');
+              history.push('/remat/home');
             })
           } else {
             swal({

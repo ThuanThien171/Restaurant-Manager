@@ -52,7 +52,7 @@ export default function History() {
   };
 
   const handleClick = (id) => {
-    history.push('/resmat/order-history/' + id);
+    history.push('/remat/order-history/' + id);
   }
 
   return (

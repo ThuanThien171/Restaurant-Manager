@@ -96,7 +96,7 @@ function MaterialDetail() {
 
     //Handle back button
     const goToManageStorage = () => {
-        history.push('/resmat/manage-storage');
+        history.push('/remat/manage-storage');
     }
 
     const handleDeleteImported = (id) => {

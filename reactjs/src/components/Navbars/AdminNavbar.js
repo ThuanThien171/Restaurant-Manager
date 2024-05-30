@@ -119,7 +119,7 @@ export default function AdminNavbar(props) {
 					<Breadcrumb>
 						<BreadcrumbItem color={mainText}>
 							<BreadcrumbLink href="#" color={secondaryText}>
-								ResMaT
+								ReMaT
 							</BreadcrumbLink>
 						</BreadcrumbItem>
 
