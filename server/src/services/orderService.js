@@ -137,34 +137,39 @@ let addNewOrder = (data) => {
             let updateTable = await db.Table.findOne({
                 where: { id: data.tableID, }
             })
-            updateTable.status = 1;
-            await updateTable.save();
-            //console.log(data)
-            for (let i = 0; i < data.menus.length; i++) {
-                await db.Item.create({
-                    orderID: newOrder.id,
-                    menuID: data.menus[i].id,
-                    staffID: data.userID,
-                    itemNumber: data.menus[i].number,
-                    status: 0,
-                    note: data.menus[i].note,
-                })
+            if(updateTable.status != 1) {
+                updateTable.status = 1;
+                await updateTable.save();
+                //console.log(data)
+                for (let i = 0; i < data.menus.length; i++) {
+                    await db.Item.create({
+                        orderID: newOrder.id,
+                        menuID: data.menus[i].id,
+                        staffID: data.userID,
+                        itemNumber: data.menus[i].number,
+                        status: 0,
+                        note: data.menus[i].note,
+                    })
 
-                // if (data.menus[i].materials[0] != undefined) {
-                //     for (let j = 0; j < data.menus[i].materials.length; j++) {
-                //         await db.Storage.create({
-                //             materialID: data.menus[i].materials[j].materialID,
-                //             importValue: -data.menus[i].materials[j].costValue * data.menus[i].number,
-                //             materialCost: 0,
-                //             type: newOrder.id,//để xóa khi hủy đơn
-                //             note: "\"" + data.menus[i].data.menuName + "\" x " + data.menus[i].number,
-                //         })
-                //     }
-                // }
+                    // if (data.menus[i].materials[0] != undefined) {
+                    //     for (let j = 0; j < data.menus[i].materials.length; j++) {
+                    //         await db.Storage.create({
+                    //             materialID: data.menus[i].materials[j].materialID,
+                    //             importValue: -data.menus[i].materials[j].costValue * data.menus[i].number,
+                    //             materialCost: 0,
+                    //             type: newOrder.id,//để xóa khi hủy đơn
+                    //             note: "\"" + data.menus[i].data.menuName + "\" x " + data.menus[i].number,
+                    //         })
+                    //     }
+                    // }
+                }
+
+                result.errCode = 0;
+                result.errMessage = "OK!";
+            }else {
+                result.errCode = 1;
+                result.errMessage = "Bàn đã được dùng";
             }
-
-            result.errCode = 0;
-            result.errMessage = "OK!";
             // } else {
             //     for (let i = 0; i < inValidItem.length; i++) {
             //         if (inValidItem[0].number == 1) {
