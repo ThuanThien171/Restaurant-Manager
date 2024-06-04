@@ -139,11 +139,15 @@ export default function Artist() {
               history.push('/remat/home');
             })
           } else {
+            dispatch(actionAddMenu(0));
+            dispatch(actionAddOrder(0));
             swal({
               title: "Lỗi!",
               text: res.data.errMessage,
               icon: "error",
               button: "OK!",
+            }).then(() => {
+              history.push('/remat/table');
             })
           }
         }
