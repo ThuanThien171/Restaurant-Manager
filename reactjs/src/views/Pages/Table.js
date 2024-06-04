@@ -120,6 +120,8 @@ export default function Genres() {
 								text: res.data.errMessage,
 								icon: "error",
 								button: "OK!",
+							}).then(() => {
+								getAvailableTable();
 							})
 						}
 					}
