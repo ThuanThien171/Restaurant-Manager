@@ -127,17 +127,18 @@ let addNewOrder = (data) => {
             // }
 
             // if (inValidItem[0] == undefined) {
-            let newOrder = await db.Order.create({
-                restaurantID: data.resID,
-                tableID: data.tableID,
-                staff: data.staff,
-                status: 0,
-            })
+            
 
             let updateTable = await db.Table.findOne({
                 where: { id: data.tableID, }
             })
             if(updateTable.status != 1) {
+                let newOrder = await db.Order.create({
+                    restaurantID: data.resID,
+                    tableID: data.tableID,
+                    staff: data.staff,
+                    status: 0,
+                })
                 updateTable.status = 1;
                 await updateTable.save();
                 //console.log(data)
