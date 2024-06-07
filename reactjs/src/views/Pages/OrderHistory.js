@@ -49,7 +49,7 @@ export default function OrderHistory() {
 	const [addedMenus, setAddedMenus] = useState([]);
 	const [orderHistory, setOrderHistory] = useState([]);
 	const userInfo = useSelector((state) => state.reducerLogin).userInfo;
-	let duration = duration = moment.duration(moment(order.updatedAt).diff(moment(order.createdAt)));
+	let duration = moment.duration(moment(order.updatedAt).diff(moment(order.createdAt)));
 	if (userInfo === undefined) {
 		return (<Redirect to={'/auth/signin/'} />);
 		// history.push('/auth/signin/');
