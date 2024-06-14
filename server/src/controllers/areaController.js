@@ -123,7 +123,20 @@ let deleteStaffTask = async (req, res) => {
 }
 
 let updateStaffTask = async (req, res) => {
-    let areaData = await areaService.updateStaffTask(req.body);
+    let promise = req.body.map(async (data) => {
+        await areaService.updateStaffTask(data);
+    })
+
+    await Promise.all(promise);
+
+    return res.status(200).json({
+        errCode: 0,
+        errMessage: 'Ok!',
+    })
+}
+
+let getAllStaffTask = async (req, res) => {
+    let areaData = await areaService.getAllStaffTask(req.body.id);
 
     return res.status(200).json({
         errCode: areaData.errCode,
@@ -136,5 +149,5 @@ module.exports = {
     getAllArea, deleteOneArea, postNewArea, 
     getOneAreaInfo, changeNameArea, changeNameTable, 
     deleteTable, addTable, getAvailableTable,
-    deleteStaffTask, updateStaffTask,
+    deleteStaffTask, updateStaffTask, getAllStaffTask,
 };

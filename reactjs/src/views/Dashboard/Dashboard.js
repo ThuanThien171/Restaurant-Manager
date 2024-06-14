@@ -24,6 +24,7 @@ export default function Dashboard() {
 	const textColor = useColorModeValue("gray.700", "white");
 	const iconUrl = "https://firebasestorage.googleapis.com/v0/b/thienproject-2a65d.appspot.com/o/Images%2Ficon%2Ftable.PNG?alt=media&token=5c49e9ba-9df2-4a03-94a8-b1aed269d10b";
 	const [orderNow, setOrderNow] = useState([]);
+	const [task, setTask] = useState([]);
 	const history = useHistory();
 	const dispatch = useDispatch();
 	//check login
@@ -51,6 +52,10 @@ export default function Dashboard() {
 		const res = await axios.post("/api/getOrderRealTime", { id: userInfo.restaurantID });
 		if (res.data.errCode === 0) {
 			setOrderNow(res.data.data);
+		}
+		const res2 = await axios.post("/api/getAllStaffTask", { id: userInfo.id });
+		if (res2.data.errCode === 0) {
+			setTask(res2.data.areas);
 		}
 	};
 
@@ -89,7 +94,7 @@ export default function Dashboard() {
 								borderRadius="10px"
 								as="button"
 								key={index}
-								hidden={(data.Table.StaffTask.userID !== userInfo.id && userInfo.role ===0) && true}
+								hidden={(task.find(task => task.areaID == data.Table.areaID) === undefined && userInfo.role ===0) && true}
 								m={"5px 0px"}
 								onClick={() => { handleClick(data.tableID) }}
 							>

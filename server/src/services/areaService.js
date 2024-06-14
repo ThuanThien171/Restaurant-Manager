@@ -264,37 +264,34 @@ let getAvailableTable = (id) => {
                     ]
 
                 },
-                // include: [{
-                //     model: db.Table,
-                //     attributes: {
-                //         exclude: ['createdAt', 'updatedAt'],
-                //     },
-
-                //     //required: true
-                // }],
-                //group: ['id'],
                 raw: true,
                 nest: true
             }).then(async (areas) => {
                 for (let i = 0; i < areas.length; i++) {
+
+                    areas[i].StaffTask = await db.StaffTask.findAll({
+                        where: {
+                            areaID: areas[i].id
+                        },
+                        attributes: {
+                            exclude: ['createdAt', 'updatedAt'],
+                            include: [
+                                [sequelize.col('User.userName'), 'userName'],
+                            ]
+                        },
+                        include: {
+                            model: db.User,
+                            as: 'User',
+                            attributes: [],                            
+                        },
+                        nest:true,
+                    })
+
                     areas[i].tables = await db.Table.findAll({
                         where: { areaID: areas[i].id },
                         attributes: {
                             exclude: ['createdAt', 'updatedAt'],
                         },
-                        include: [{
-                            model: db.StaffTask,
-                            attributes: {
-                                exclude: ['createdAt', 'updatedAt'],
-                            },
-                            include: {
-                                model: db.User,
-                                attributes: ['userName'],                            
-                            },
-                            nest:true,
-                            //separate: true
-                            //required: true
-                        }],
                         group: ['id'],
                         raw: true,
                         nest: true
@@ -320,7 +317,7 @@ let deleteStaffTask = (data) => {
         try {
             let result = {};
             let task = await db.StaffTask.findOne({
-                where: { tableID: data.tableID },
+                where: { areaID: data.areaID },
             })
             if(task) {
             await task.destroy();
@@ -342,25 +339,41 @@ let updateStaffTask = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
             let result = {};
-            let task = await db.StaffTask.findOne({
-                where: { tableID: data.staffTask.tableID },
-            })
-            if(task){
-                task.userID = data.staffTask.userID;
-                await task.save();
-            }else {
+            await db.StaffTask.destroy({where: {areaID : data.areaID}})
+
+            let promise = data.userID.map(async (user)=>{
                 await db.StaffTask.create({
-                    tableID: data.staffTask.tableID,
-                    userID: data.staffTask.userID,
+                    areaID: data.areaID,
+                    userID: user,
                 })
-            }
-            let areas = await getAvailableTable(data.resID);
+            })
+            await Promise.all(promise);
+            
             result.errCode = 0;
             result.errMessage = "OK!";
-            result.data = areas.data ? areas.data : {};
             resolve(result);
             
 
+        } catch (e) {
+            reject(e);
+        }
+    })
+}
+
+let getAllStaffTask = (id) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let result = {};
+            let areas = await db.StaffTask.findAll({
+                where: { userID: id },
+                attributes: ['areaID'],
+                raw: true,
+                nest: true
+            })
+            result.errCode = 0;
+            result.errMessage = "OK!";
+            result.data = areas;
+            resolve(result);
         } catch (e) {
             reject(e);
         }
@@ -371,5 +384,5 @@ module.exports = {
     getAllArea, deleteOneArea, postNewArea, 
     getOneAreaInfo, changeNameArea, changeNameTable, 
     deleteTable, addTable, getAvailableTable,
-    deleteStaffTask, updateStaffTask,
+    deleteStaffTask, updateStaffTask, getAllStaffTask
 };

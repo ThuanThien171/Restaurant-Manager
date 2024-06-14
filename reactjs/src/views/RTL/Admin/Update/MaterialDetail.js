@@ -52,6 +52,7 @@ import {
 import Card from "components/Card/Card.js";
 import CardBody from "components/Card/CardBody.js";
 import CardHeader from "components/Card/CardHeader.js";
+import StorageTableComponent from "components/Tables/StorageTable";
 
 function MaterialDetail() {
 
@@ -60,10 +61,14 @@ function MaterialDetail() {
     const { id } = useParams();
 
     const [materialImported, setMaterialImported] = useState([]);
-    const [materialUsed, setMaterialUsed] = useState([]);
-
     const [name, setName] = useState('');
     const [measure, setMeasure] = useState('');
+
+    let date = new Date();
+    let month = date.getMonth()+1;
+    let day = date.getDate();
+    const [fromDate,setFromDate] = useState(`${date.getFullYear()}-${month<10?`0${month}`: month}-01`)
+    const [toDate,setToDate] = useState(`${date.getFullYear()}-${month<10?`0${month}`: month}-${day<10?`0${day}`: day}`)
 
     const userInfo = useSelector((state) => state.reducerLogin).userInfo;
     if (userInfo === undefined) {
@@ -74,210 +79,62 @@ function MaterialDetail() {
     //Get current material detail
     useEffect(() => {
         getMaterialInfo();
-        getUsedInfo();
     }, [])
     const getMaterialInfo = async () => {
         const res = await axios.post("/api/getImportedInfo", { id: id });
         if (res.data.errCode === 0) {
             setMaterialImported(res.data.importedData);
-
             setName(res.data.material);
             setMeasure(res.data.measure);
         }
     }
-    const getUsedInfo = async () => {
-        const res = await axios.post("/api/getUsedMaterial", { id: id });
-        if (res.data.errCode === 0) {
-            setMaterialUsed(res.data.materials);
-
-        }
-    }
-
 
     //Handle back button
     const goToManageStorage = () => {
         history.push('/remat/manage-storage');
     }
 
-    const handleDeleteImported = (id) => {
-
-        swal("Bạn muốn xóa bản ghi này?", {
-            buttons: {
-                cancel: "Không",
-                catch: {
-                    text: "Đúng",
-                    value: "catch",
-                },
-            },
-        })
-            .then((value) => {
-                switch (value) {
-                    case "cancel":
-                        break;
-                    case "catch":
-                        axios.post("/api/deleteImported", { id: id });
-                        setTimeout(function () {
-                            swal({
-                                title: "Success!",
-                                text: "Xóa thành công",
-                                icon: "success",
-                                button: "OK!",
-                            })
-                        }, 200);
-                        setMaterialImported(materialImported.filter((item) => item.id != id));
-
-                        // window.location.reload();
-                        break;
-                    default:
-                        break;
-                }
-            });
-    }
-
     return (
         <div style={{ margin: '60px 0px 0px 0px' }}>
             <Card overflowX={{ xl: "hidden" }}>
                 <CardHeader p="6px 0px 22px 0px" alignItems="Center">
-                    <Box mb={{ sm: "8px", md: "0px" }}>
+                    <Flex mb={{ sm: "8px", md: "0px" }} w='100%' justifyContent={'space-between'} alignItems={'center'}>
                         <Text fontSize="2xl" color={textColor} fontWeight="bold">{name}</Text>
-                    </Box>
-                    <Box ms="auto" w={{ sm: "100%", md: "unset" }} >
+
                         <Button style={{ margin: "10px 10px 10px 20px", 'borderRadius': "5px" }} colorScheme="blue" onClick={goToManageStorage}>Back
                         </Button>
-                    </Box>
+                    </Flex>
 
                 </CardHeader>
-                <CardBody style={{ overflow: "auto" }}>
-                    <Tabs size="sm" colorScheme="cyan" width="100%" variant='enclosed' isFitted>
-                        <TabList>
-                            <Tab _focus={{ boxShadow: "none", }} >Nhập vào</Tab>
-                            <Tab _focus={{ boxShadow: "none", }}>Tiêu hao</Tab>
-                        </TabList>
-                        <TabPanels>
-                            <TabPanel>
-                                <Table variant="simple" color={textColor} >
-                                    <Thead>
-                                        <Tr my=".8rem" pl="0px" color="gray.400">
-                                            <Th color="gray.400">Ngày nhập</Th>
-                                            <Th color="gray.400">Lượng nhập</Th>
-                                            <Th color="gray.400">Chi phí</Th>
-                                            <Th color="gray.400">Ghi chú</Th>
-                                            <Th color="gray.400">Xóa</Th>
+                <CardBody style={{ overflow: "auto" , display: 'flex', 'flex-direction': 'column'}}>
+                    <Flex w="100%" alignItems={"center"} justifyContent={"center"} flexDirection='row' flexWrap={'wrap'} marginBottom={'30px'}>
+                        <Text
+                            color={textColor}
+                            fontSize={"lg"}
+                            fontWeight={"semibold"}
+                            marginRight={'5px'}
+                        >Bảng thống kê nguyên liệu từ </Text>
+                        <input type='date' value={fromDate} 
+                        style={{width: '120px'}}
+                        onChange={ async (e)=> {
+                            setFromDate(e.target.value);
+                            //getDataTable(e.target.value,null)
+                        }}/>
+                        <Text
+                            color={textColor}
+                            fontSize={"lg"}
+                            fontWeight={"semibold"}
+                            marginX={'5px'}
+                        > đến</Text>
+                        <input type='date' value={toDate} 
+                        style={{width: '120px'}}
+                        onChange={(e)=> {
+                            setToDate(e.target.value);
+                            //getDataTable(null,e.target.value)
+                        }}/>
+                    </Flex>
 
-                                        </Tr>
-                                    </Thead>
-                                    <Tbody>
-                                        {materialImported.map((data, index) => {
-                                            return (
-                                                <Tr key={index}>
-                                                    <Td minWidth={{ sm: "120px" }} pl="0px">
-                                                        <Flex align="center" py=".8rem" minWidth="100%" >
-
-                                                            <Flex direction="column">
-                                                                <Text
-                                                                    fontSize="lg"
-                                                                    color={textColor}
-
-                                                                    minWidth="100%"
-                                                                >
-                                                                    {moment(data.createdAt).tz("Asia/Ho_Chi_Minh").format('D-M-YYYY, h:mm:ss a')}
-                                                                </Text>
-
-                                                            </Flex>
-                                                        </Flex>
-                                                    </Td>
-                                                    <Td maxWidth={{ sm: "100px" }}>
-                                                        <Flex direction="column" style={{ 'align-items': ' center', 'flex-direction': 'row' }}>
-
-                                                            <Text fontSize="lg" color="orange.600" fontWeight="bold">{Number(data.importValue).toLocaleString('vi-VN') || 0}</Text>
-                                                            <Text fontSize="lg" style={{ margin: "5px 5px 5px 5px" }} >{measure}</Text>
-
-                                                        </Flex>
-                                                    </Td>
-                                                    <Td maxWidth={{ sm: "100px" }}>
-                                                        <Flex direction="column">
-                                                            <Text fontSize="lg" color="orange.600" fontWeight="bold">{Number(data.materialCost).toLocaleString('vi-VN', { style: 'currency', currency: 'VND', }) || 0}</Text>
-                                                        </Flex>
-                                                    </Td>
-                                                    <Td minWidth={{ sm: "200px" }}>
-                                                        <Flex direction="column">
-                                                            <Text fontSize="lg" color={data.type == 0 ? textColor : "red.500"} fontWeight="light">{data.note || "..."}</Text>
-                                                        </Flex>
-                                                    </Td>
-                                                    <Td>
-                                                        <Button colorScheme="red" size="sm" onClick={() => { handleDeleteImported(data.id) }}><i className="fa fa-trash"></i></Button>
-                                                    </Td>
-                                                </Tr>
-                                            );
-                                        })}
-
-                                    </Tbody>
-                                </Table>
-                            </TabPanel>
-                            <TabPanel>
-                                <Text fontSize={"sm"} color={"red"} ms="10px"><WarningTwoIcon mb="2px" /> Số liệu không tính những đơn đã hủy</Text>
-                                <Table variant="simple" color={textColor} >
-                                    <Thead>
-                                        <Tr my=".8rem" pl="0px" color="gray.400">
-                                            <Th color="gray.400">Món</Th>
-                                            <Th color="gray.400">Số lượng</Th>
-                                            <Th color="gray.400">Tổng tiêu hao</Th>
-                                            {/* <Th color="gray.400">Xóa</Th> */}
-
-                                        </Tr>
-                                    </Thead>
-                                    <Tbody>
-                                        {materialUsed.map((data, index) => {
-                                            return (
-                                                <Tr key={index}>
-                                                    <Td minWidth={"200px"} pl="0px">
-                                                        <Flex align="center" py=".8rem" minWidth="100%" >
-
-                                                            <Flex direction="column">
-                                                                <Text
-                                                                    fontSize="lg"
-                                                                    color={textColor}
-                                                                    fontWeight={"semibold"}
-                                                                    minWidth="100%"
-                                                                >
-                                                                    {data.menuName}
-                                                                </Text>
-                                                                <Text
-                                                                    fontSize="sm"
-                                                                    color={textColor}
-
-                                                                    minWidth="100%"
-                                                                >
-                                                                    Lượng hao mỗi món: {data.costValue} {measure}
-                                                                </Text>
-                                                            </Flex>
-                                                        </Flex>
-                                                    </Td>
-                                                    <Td minWidth={{ sm: "200px" }}>
-                                                        <Text fontSize="lg" color="orange.600" fontWeight="bold">{data.totalNumber || 0}</Text>
-
-                                                    </Td>
-
-                                                    <Td minWidth={{ sm: "200px" }} alignItems={"center"}>
-                                                        <Flex direction="row">
-                                                            <Text fontSize="lg" color={textColor} fontWeight="light" m="5px">{Number(data.costValue * data.totalNumber).toFixed(2) || 0}</Text>
-                                                            <Text fontSize="lg" style={{ margin: "5px 0" }} >{measure}</Text>
-                                                        </Flex>
-                                                    </Td>
-                                                    {/* <Td>
-                                                        <Button colorScheme="red" size="sm" onClick={() => { handleDeleteImported(data.id) }}><i className="fa fa-trash"></i></Button>
-                                                    </Td> */}
-                                                </Tr>
-                                            );
-                                        })}
-
-                                    </Tbody>
-                                </Table>
-                            </TabPanel>
-                        </TabPanels>
-                    </Tabs>
-
-
+                    <StorageTableComponent id={id} measure={measure} materialImported={materialImported}/>
                 </CardBody>
             </Card>
         </div >

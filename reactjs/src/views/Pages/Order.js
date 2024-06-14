@@ -105,7 +105,7 @@ export default function Order() {
 						case "cancel":
 							break;
 						case "catch":
-							const res = await axios.post("/api/cancelOrder", { id: order.id });
+							const res = await axios.post("/api/cancelOrder", { id: order.id, staff: userInfo.userName });
 							if (res.data.errCode === 0) {
 								swal({
 									title: "Ok!",
@@ -149,7 +149,7 @@ export default function Order() {
 						case "cancel":
 							break;
 						case "catch":
-							const res = await axios.post("/api/paymentOrder", { id: order.id });
+							const res = await axios.post("/api/paymentOrder", { id: order.id, staff: userInfo.userName });
 							if (res.data.errCode === 0) {
 								swal({
 									title: "Ok!",
@@ -381,8 +381,6 @@ export default function Order() {
 			getOrderInfo();
 			let a = addedMenus.filter(item => item.menuID == menuID);
 			let index = addedMenus.indexOf(a[0]);
-			console.log(a[0]);
-			console.log(index);
 			document.getElementById(index).value = a[0].itemNumber - itemNumber;
 			document.getElementById(index + "t2").value = Number(a[0].price * (a[0].itemNumber - itemNumber)).toLocaleString('vi-VN', { style: 'currency', currency: 'VND', });
 
@@ -392,6 +390,14 @@ export default function Order() {
 				title: "Ok!",
 				text: "Thành công",
 				icon: "success",
+				button: "OK!",
+			})
+		}else {
+			setUnserveItem(res.data.data);
+			swal({
+				title: "Ok!",
+				text: res.data.errMessage,
+				icon: "error",
 				button: "OK!",
 			})
 		}
@@ -576,34 +582,35 @@ export default function Order() {
 										<Flex p=".3rem" w="100%" m="4px 0px"
 											flexDirection={{ md: "row", sm: "column" }}
 											alignItems={"center"}
-											justifyContent={"space-between"}
+											justifyContent={'space-between'}
 											style={{ border: "1px solid #38B2AC" }}
 											borderRadius="10px"
 											key={index}
 											id={data.id + "-item"}
 										>
-											<Flex flexWrap={"wrap"} alignItems={"center"} h="100%" ms="20px">
+											<Flex flexWrap={"wrap"} alignItems={"center"} w={{sm: '100%', md: '50%'}} h="100%" paddingX={'20px'} justifyContent={'space-between'}>
 												<Flex flexDirection={"column"} m="5px">
 													<Text color={textColor} fontSize={"lg"} fontWeight={"semibold"}>{data.menuName}</Text>
 													<Text color={textColor} fontSize={"sm"} fontWeight="thin">{moment(data.createdAt).tz("Asia/Ho_Chi_Minh").format('D-M-YYYY, H:mm:ss')}</Text>
 												</Flex>
-												<Flex m="5px" ms={{ sm: "0px", md: "30px" }} >
+												<Flex m="5px">
 													<Text color={textColor} fontSize={"md"} fontWeight={"semibold"}>Số lượng: {data.itemNumber}</Text>
 												</Flex>
-												<Flex m="5px" ms={{ sm: "0px", md: "30px" }} >
-													{data.status == 0 ?
-														<Text color={useColorModeValue("orange", "gray.700")} fontSize={"md"} fontWeight={"semibold"}>Bếp đang chuẩn bị</Text>
-														: <Text color={useColorModeValue("green", "gray.700")} fontSize={"md"} fontWeight={"semibold"}>Bếp đã xong</Text>
-													}
-												</Flex>
 											</Flex>
+												<Flex m="5px" ms={{ sm: "0px", md: "30px" }} >
+													{data.status == 0 && <Text color={useColorModeValue("orange", "gray.700")} fontSize={"md"} fontWeight={"semibold"}>Đang duyệt</Text>}
+													{data.status == 4 && <Text color={useColorModeValue("orange", "gray.700")} fontSize={"md"} fontWeight={"semibold"}>Bếp đang chuẩn bị</Text>}
+													{data.status == 3 && <Text color={useColorModeValue("green", "gray.700")} fontSize={"md"} fontWeight={"semibold"}>Đã chuẩn bị xong</Text>}
+												</Flex>
+											
 											<Flex m={"5px"} w="unset" me={{ sm: "5px", md: "25px" }}>
-												<Button colorScheme="green" mr="5px"
-													hidden={(data.status == 0) ? true : false}
+												<Button colorScheme="green"
+													hidden={(data.status == 3) ? false : true}
 													onClick={() => { updateItem(data.id); }}
 												><CheckCircleIcon mr={"3px"} />Đã giao</Button>
 
-												<Button colorScheme="red" ml={"5px"}
+												<Button colorScheme="red"
+													hidden={(data.status == 0) ? false : true}
 													onClick={() => { deleteItem(data.id, data.menuID, data.itemNumber); }}
 												><CloseIcon mr={"3px"} />Hủy</Button>
 											</Flex>

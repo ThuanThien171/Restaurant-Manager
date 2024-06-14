@@ -62,13 +62,17 @@ export default function Dashboard() {
     const [updateID, getUpdateId] = useState(0);
     const [stat, setStat] = useState(0);
 
+    let date = new Date();
+    let month = date.getMonth()+1;
+    let day = date.getDate();
+
     const iconUrl = "https://firebasestorage.googleapis.com/v0/b/thienproject-2a65d.appspot.com/o/Images%2Ficon%2FmaterialIcon.PNG?alt=media&token=3d6ff0f3-086a-4381-9af1-8ebb111e70fc";
 
     //add new setup
     const [addNew, setNew] = useState({
-        materialID: 0,
-        importValue: 0,
-        materialCost: 0,
+        materialID: null,
+        importValue: null,
+        materialCost: null,
         type: 0,// 0 = import type, 1 = used type
         note: ""
     });
@@ -80,30 +84,15 @@ export default function Dashboard() {
         setNew({ ...addNew, [e.target.name]: e.target.value });
     };
 
-    const inputUpdateStorage = (id, value) => {
-        let m1 = material.filter((item) => item.id == id);
-        let m2 = updateStorage.filter((item) => item.id == id);
+    const inputUpdateStorage = (id, value) => { 
+        let array = updateStorage;
 
-        if (m2[0] == undefined) {
-            updateStorage.push({
-                id: id,
-                value: (parseFloat(value) - parseFloat(m1[0].totalValue)),
-            });
-            setUpdateStorage(updateStorage);
-        } else {
-            if (!value) {
-                let m3 = updateStorage.filter((item) => item.id != id);
-                console.log(m3);
-                setUpdateStorage(m3);
-            } else {
-                updateStorage.map((data) => {
-                    if (data.id == id) data.value = (parseFloat(value) - parseFloat(m1[0].totalValue));
-                })
-                setUpdateStorage(updateStorage);
+        for(let i=0; i<array.length; i++) {
+            if(array[i].id === id){ 
+                array[i].value = +(parseFloat(value) - parseFloat(array[i].total)).toFixed(2)
             }
         }
-
-
+        setUpdateStorage(array);
     }
 
     if (userInfo === undefined) {
@@ -119,6 +108,16 @@ export default function Dashboard() {
         if (res.data.errCode === 0) {
 
             setMaterial(res.data.storages);
+            let data = res.data.storages;
+            let result = [];
+            for(let i =0;i<data.length;i++) {
+                result.push({
+                    id: data[i].id,
+                    total: data[i].value,
+                    value: null,
+                })
+            }
+            setUpdateStorage(result);
         }
     }
 
@@ -126,14 +125,16 @@ export default function Dashboard() {
 
         if (stat == 3) {
             //add storage state
-            if (addNew.importValue == 0) {
+            if (!addNew.importValue || !addNew.materialCost) {
                 swal({
                     title: "Lỗi!",
-                    text: "Chưa nhập lượng ngyên liệu thêm!",
+                    text: "Thiếu giá trị nhập vào!",
                     icon: "warning",
                     button: "OK!",
                 });
             } else {
+                onClose();
+                setStat(0);
                 addNew.materialID = updateID;
                 addNew.id = userInfo.restaurantID;
                 const res = await axios.post("/api/addStorage", addNew);
@@ -158,6 +159,8 @@ export default function Dashboard() {
                 button: "OK!",
             });
         } else {
+            onClose();
+            setStat(0);
             if (stat == 1) {
                 const res = await axios.post("/api/updateMaterial", { id: updateID, name: newName, resID: userInfo.restaurantID, measure: measure });
                 //change password state   
@@ -203,12 +206,12 @@ export default function Dashboard() {
 
         }
 
-        setStat(0);
-        onClose();
+        
+        
         setNew({
-            materialID: 0,
-            importValue: 0,
-            materialCost: 0,
+            materialID: null,
+            importValue: null,
+            materialCost: null,
             type: 0,// 0 = import type, 1 = used type
             note: ""
         });
@@ -255,8 +258,14 @@ export default function Dashboard() {
     }
 
     const handleUpdateStorage = async () => {
-        console.log(updateStorage);
-        onClose();
+        let check = true;
+        for(let i=0; i< updateStorage.length; i ++){
+            if(updateStorage[i].value == null || updateStorage[i].value == NaN || updateStorage[i].value == undefined){
+                check = false;
+            }
+        }
+
+        if(check){
         const res = await axios.post("/api/updateStorage", { id: userInfo.restaurantID, data: updateStorage });
         if (res.data.errCode === 0) {
 
@@ -267,17 +276,36 @@ export default function Dashboard() {
                 icon: "success",
                 button: "OK!",
             });
+            
 
+        }
+        onClose();
+        }else {
+            swal({
+                title: "Lỗi!",
+                text: "Thiếu giá trị nhập vào",
+                icon: "error",
+                button: "OK!",
+            });
         }
     }
     return (
         <div style={{ margin: '60px 0px 0px 0px' }}>
             <Card overflowX={{ xl: "hidden" }}>
                 <CardHeader p="6px 0px 22px 0px" alignItems="Center" justifyContent="space-between">
-
                     <Text fontSize="2xl" color={textColor} fontWeight="bold">Kho</Text>
                     <Flex>
-                        <Button style={{ margin: "5px", }} colorScheme="blue" onClick={(e) => { onOpen(); setStat(4); setUpdateStorage([]); }}>Kiểm kho</Button>
+                        <Button style={{ margin: "5px", }} colorScheme="blue" 
+                        onClick={(e) => { 
+                            setStat(4);
+                            let array = updateStorage;
+                            for(let i=0; i<array.length; i++) {
+                                array[i].value = null;
+                            }
+                            setUpdateStorage(array);
+                            onOpen(); 
+                        }}
+                        >Kiểm kho</Button>
 
                         <Button style={{ margin: "5px", }} colorScheme="blue" onClick={(e) => { onOpen(); setStat(2); setNewName(""); setMeasure(""); }}>Thêm nguyên liệu</Button>
                     </Flex>
@@ -289,7 +317,6 @@ export default function Dashboard() {
                             <Tr my=".8rem" pl="0px" color="gray.400">
                                 <Th color="gray.400">Nguyên liệu</Th>
                                 <Th color="gray.400">Tồn kho</Th>
-                                <Th color="gray.400">Chi phí</Th>
                                 <Th color="gray.400">Chi tiết</Th>
                                 <Th color="gray.400">Cập nhật</Th>
                                 <Th color="gray.400">Xóa</Th>
@@ -300,7 +327,7 @@ export default function Dashboard() {
                             {material.map((data, index) => {
                                 return (
                                     <Tr key={index}>
-                                        <Td minWidth={{ sm: "200px" }} width="100%" pl="0px" as="button" onClick={() => { goToMaterialDetail(data.id) }}>
+                                        <Td minWidth={{ sm: "150px" }} width="100%" pl="0px" as="button" onClick={() => { goToMaterialDetail(data.id) }}>
                                             <Flex align="center" py=".8rem" minWidth="100%" >
                                                 <Avatar src={iconUrl} w="50px" borderRadius="12px" me="18px" objectFit="fill" />
                                                 <Flex direction="column">
@@ -319,14 +346,9 @@ export default function Dashboard() {
                                         <Td>
                                             <Flex direction="column" style={{ 'align-items': ' center', 'flex-direction': 'row' }}>
 
-                                                <Text fontSize="lg" color="orange.600" fontWeight="bold">{Number(data.totalValue).toLocaleString('vi-VN') || 0}</Text>
+                                                <Text fontSize="lg" color="orange.600" fontWeight="bold">{Number(data.value).toLocaleString('vi-VN') || 0}</Text>
                                                 <Text style={{ margin: "5px 5px 5px 5px", 'font-size': '17px' }} alignItems="center">{data.measure}</Text>
 
-                                            </Flex>
-                                        </Td>
-                                        <Td>
-                                            <Flex direction="column">
-                                                <Text fontSize="lg" color="orange.600" fontWeight="bold">{Number(data.totalCost).toLocaleString('vi-VN', { style: 'currency', currency: 'VND', }) || 0}</Text>
                                             </Flex>
                                         </Td>
                                         <Td>
@@ -408,7 +430,7 @@ export default function Dashboard() {
                                                         placeholder="Nhập thấp nhất 0.01."
                                                         name="importValue"
                                                         onChange={handleInput}
-                                                        value={(addNew.importValue == 0) ? "" : addNew.importValue}
+                                                        value={addNew.importValue}
                                                         type="number"
                                                         pattern={"[0-9]*[.,]?[0-9]"}
                                                         step="0.01"
@@ -425,7 +447,7 @@ export default function Dashboard() {
                                                         placeholder="Nhập chi phí."
                                                         name="materialCost"
                                                         onChange={handleInput}
-                                                        value={(addNew.materialCost == 0) ? "" : addNew.materialCost}
+                                                        value={addNew.materialCost}
                                                         type="number"
                                                         min="0"
                                                     />
@@ -462,7 +484,7 @@ export default function Dashboard() {
                                 >
                                     <ModalOverlay />
                                     <ModalContent>
-                                        <ModalHeader>Kiểm kho</ModalHeader>
+                                        <ModalHeader>Kiểm kho ngày: {date.getFullYear()}-{month<10?`0${month}`: month}-{day<10?`0${day}`: day}</ModalHeader>
                                         <ModalCloseButton />
                                         <ModalBody pb={6}>
                                             {material.map((data, index) => {
@@ -482,7 +504,7 @@ export default function Dashboard() {
                                                                 pattern={"[0-9]*[.,]?[0-9]"}
                                                                 step="0.01"
                                                                 min="0"
-
+                                                                
                                                             />
                                                             <Text w="15%" style={{ margin: "5px", 'font-size': '20px' }} display={"flex"} alignItems="center" justifyContent={"center"}>{data.measure}</Text>
                                                         </Flex>

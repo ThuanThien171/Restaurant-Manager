@@ -71,13 +71,13 @@ let getImportedInfo = async (req, res) => {
     })
 }
 
-let deleteImported = async (req, res) => {
-    let id = req.body.id
-    let areaData = await storageService.deleteImported(id);
+let getImportedInDay = async (req, res) => {
+    let importedData = await storageService.getImportedInDay(req.body.id, req.body.date);
 
     return res.status(200).json({
-        errCode: areaData.errCode,
-        errMessage: areaData.errMessage,
+        errCode: importedData.errCode,
+        errMessage: importedData.errMessage,
+        importedData: importedData.data,
     })
 }
 
@@ -92,9 +92,9 @@ let getMaterial = async (req, res) => {
     })
 }
 
-let getUsedMaterial = async (req, res) => {
+let getUsedInDay = async (req, res) => {
 
-    let materials = await storageService.getUsedMaterial(req.body.id);
+    let materials = await storageService.getUsedInDay(req.body.id, req.body.date);
 
     return res.status(200).json({
         errCode: materials.errCode,
@@ -151,6 +151,6 @@ let updateStorage = async (req, res) => {
 module.exports = {
     getAllStorageInfo, deleteOneMaterial, updateMaterial,
     addMaterial, addStorage, getImportedInfo,
-    deleteImported, getMaterial, getUsedMaterial,
+    getImportedInDay, getMaterial, getUsedInDay,
     getCostData, addNewCost, deleteCost, updateStorage,
 };

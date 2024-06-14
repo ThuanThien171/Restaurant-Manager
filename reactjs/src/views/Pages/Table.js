@@ -25,6 +25,7 @@ export default function Genres() {
 	const iconUrl = "https://firebasestorage.googleapis.com/v0/b/thienproject-2a65d.appspot.com/o/Images%2Ficon%2Ftable.PNG?alt=media&token=5c49e9ba-9df2-4a03-94a8-b1aed269d10b";
 	const [areas, setAreas] = useState([]);
 	const [hidden, setHidden] = useState(false);
+	const [task, setTask] = useState([]);
 	const history = useHistory();
 	const dispatch = useDispatch();
 	//check login
@@ -52,6 +53,10 @@ export default function Genres() {
 		const res = await axios.post("/api/getAvailableTable", { id: userInfo.restaurantID });
 		if (res.data.errCode === 0) {
 			setAreas(res.data.areas);
+		}
+		const res2 = await axios.post("/api/getAllStaffTask", { id: userInfo.id });
+		if (res2.data.errCode === 0) {
+			setTask(res2.data.areas);
 		}
 	};
 
@@ -214,6 +219,7 @@ export default function Genres() {
 				>
 					<Separator />
 					{areas.map((data, index) => {
+						if(!hidden && task.find(task => task.areaID == data.id) === undefined && userInfo.role ===0) return(null);
 						return (
 							<>
 								<Flex w="100%" mt="15px" p="0px 20px">
@@ -241,7 +247,7 @@ export default function Genres() {
 												transform: "scale(.98)",
 											}}
 											as="button"
-											hidden={hidden ? ((table.status != 0) && true):((userInfo.role == 0 && userInfo.id != table.StaffTask.userID) ? true : false)}
+											hidden={hidden && (table.status != 0)}
 											//{(table.status != 0 && hidden) && true}
 											//((userInfo.role == 0 && userInfo.id != table.StaffTask.userID) ? true : false)
 											//|| (userInfo.role == 0 && userInfo.id != table.StaffTask.userID)
