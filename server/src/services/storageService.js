@@ -167,12 +167,17 @@ let addStorage = (storage) => {
     })
 }
 
-let getImportedInfo = (id) => {
+let getImportedInfo = (id,start,end) => {
     return new Promise(async (resolve, reject) => {
         try {
             let result = {};
             let imported = await db.Storage.findAll({
-                where: { materialID: id },
+                where: { 
+                    materialID: id,
+                    updatedAt: {
+                        [Op.between]: [start, `${end} 23:59:59`]
+                    },
+                },
                 attributes: {
                     include: [ 
                         [sequelize.fn('date_format',sequelize.col('updatedAt'),'%Y-%m-%d'),'date'],
@@ -210,7 +215,7 @@ let getImportedInfo = (id) => {
         }
     })
 }
-//////////////////////
+
 let getImportedInDay = (id, date) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -277,7 +282,7 @@ let getUsedInDay = (id, date) => {
         }
     })
 }
-///////////////////////
+
 let getMaterial = (id) => {
     return new Promise(async (resolve, reject) => {
         try {
