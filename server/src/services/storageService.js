@@ -171,6 +171,26 @@ let getImportedInfo = (id,start,end) => {
     return new Promise(async (resolve, reject) => {
         try {
             let result = {};
+            let lastCheck = await db.Storage.findOne({
+                where:{
+                    type: 3,
+                    updatedAt: {
+                        [Op.between]: [start, `${end} 23:59:59`]
+                    },
+                },
+                order: [
+                    ['updatedAt', 'DESC'],
+                ],
+                raw: true,
+            })
+            let date = new Date(lastCheck.updatedAt);
+            let month = date.getMonth()+1;
+            let day = date.getDate();
+            let hour = date.getHours();
+            let m = date.getMinutes();
+            let s = date.getSeconds();
+            let convert = `${date.getFullYear()}-${month<10?`0${month}`: month}-${day<10?`0${day}`: day} ${hour<10?`0${hour}`: hour}:${m<10?`0${m}`: m}:${s<10?`0${s}`: s}`
+
             let imported = await db.Storage.findAll({
                 where: { 
                     materialID: id,
@@ -186,7 +206,7 @@ let getImportedInfo = (id,start,end) => {
                         [sequelize.fn('sum',sequelize.literal('CASE WHEN type = 1 THEN importValue ELSE 0 END')),'usedValue'],
                         [sequelize.fn('sum',sequelize.literal('CASE WHEN type = 1 THEN importValue ELSE 0 END')),'usedValue'],
                         [sequelize.fn('sum',sequelize.literal('CASE WHEN type = 2 THEN importValue ELSE 0 END')),'diffValue'],
-                        [sequelize.fn('sum',sequelize.literal('CASE WHEN type = 3 THEN importValue ELSE 0 END')),'baseValue'],
+                        [sequelize.fn('sum',sequelize.literal(`CASE WHEN type = 3 AND updatedAt = '${convert}' THEN importValue ELSE 0 END`)),'baseValue'],
                     ],
                     exclude:['createdAt', 'updatedAt']
                 },
