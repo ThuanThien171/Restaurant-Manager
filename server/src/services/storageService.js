@@ -190,7 +190,7 @@ let getImportedInfo = (id,start,end) => {
             let m = date.getMinutes();
             let s = date.getSeconds();
             let convert = `${date.getFullYear()}-${month<10?`0${month}`: month}-${day<10?`0${day}`: day} ${hour<10?`0${hour}`: hour}:${m<10?`0${m}`: m}:${s<10?`0${s}`: s}`
-
+            console.log(convert);
             let imported = await db.Storage.findAll({
                 where: { 
                     materialID: id,
