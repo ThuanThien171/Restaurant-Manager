@@ -61,7 +61,7 @@ let addStorage = async (req, res) => {
 }
 
 let getImportedInfo = async (req, res) => {
-    let storageData = await storageService.getImportedInfo(req.body.id);
+    let storageData = await storageService.getImportedInfo(req.body.id,req.body.fromDate,req.body.toDate);
     return res.status(200).json({
         errCode: storageData.errCode,
         errMessage: storageData.errMessage,

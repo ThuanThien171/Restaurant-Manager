@@ -78,10 +78,14 @@ function MaterialDetail() {
 
     //Get current material detail
     useEffect(() => {
-        getMaterialInfo();
+        getMaterialInfo(fromDate,toDate);
     }, [])
-    const getMaterialInfo = async () => {
-        const res = await axios.post("/api/getImportedInfo", { id: id });
+    const getMaterialInfo = async (start,end) => {
+        const res = await axios.post("/api/getImportedInfo", { 
+            id: id,
+            fromDate: start?start:fromDate,
+            toDate: end?end:toDate
+        });
         if (res.data.errCode === 0) {
             setMaterialImported(res.data.importedData);
             setName(res.data.material);
@@ -118,7 +122,7 @@ function MaterialDetail() {
                         style={{width: '120px'}}
                         onChange={ async (e)=> {
                             setFromDate(e.target.value);
-                            //getDataTable(e.target.value,null)
+                            getMaterialInfo(e.target.value,null)
                         }}/>
                         <Text
                             color={textColor}
@@ -130,7 +134,7 @@ function MaterialDetail() {
                         style={{width: '120px'}}
                         onChange={(e)=> {
                             setToDate(e.target.value);
-                            //getDataTable(null,e.target.value)
+                            getMaterialInfo(null,e.target.value)
                         }}/>
                     </Flex>
 
