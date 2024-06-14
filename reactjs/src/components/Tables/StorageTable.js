@@ -88,7 +88,7 @@ export default function StorageTableComponent(props) {
                 ? `${+parseFloat(row.diffValue).toFixed(2)} ${measure}`
                 :(row.diffValue < 0) 
                 ? `-${+parseFloat(-row.diffValue).toFixed(2)} ${measure}`
-                : 0,
+                : `0 ${measure}`,
             sortable: true,
         },
     ];
