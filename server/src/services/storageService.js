@@ -186,7 +186,7 @@ let getImportedInfo = (id,start,end) => {
             let date = new Date(lastCheck.updatedAt);
             let month = date.getMonth()+1;
             let day = date.getDate();
-            let hour = date.getHours();
+            let hour = date.getHours()+7;
             let m = date.getMinutes();
             let s = date.getSeconds();
             let convert = `${date.getFullYear()}-${month<10?`0${month}`: month}-${day<10?`0${day}`: day} ${hour<10?`0${hour}`: hour}:${m<10?`0${m}`: m}:${s<10?`0${s}`: s}`
