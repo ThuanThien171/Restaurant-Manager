@@ -11,12 +11,12 @@ module.exports = (sequelize, DataTypes) => {
          */
         static associate(models) {
             // define association here
-            StaffTask.belongsTo(models.Table, { foreignKey: 'tableID' })
+            StaffTask.belongsTo(models.Area, { foreignKey: 'areaID' })
             StaffTask.belongsTo(models.User, { foreignKey: 'userID' })
         }
     }
     StaffTask.init({
-        tableID: DataTypes.INTEGER,
+        areaID: DataTypes.INTEGER,
         userID: DataTypes.INTEGER,
     }, {
         sequelize,

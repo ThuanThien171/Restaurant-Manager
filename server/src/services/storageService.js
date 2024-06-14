@@ -12,32 +12,10 @@ let getAllStorageInfo = (id) => {
                 where: { restaurantID: id },
                 attributes: {
                     exclude: ['createdAt', 'updatedAt'],
-                    include: [
-                        [sequelize.fn('sum', sequelize.col('Storages.importValue')), 'totalValue'],
-                        [sequelize.fn('sum', sequelize.col('Storages.materialCost')), 'totalCost'],
-                    ]
                 },
-                include: [{
-                    model: db.Storage,
-                    attributes: [],
-                    // required: true
-                }],
-                group: ['id'],
                 raw: true,
                 nest: true
             })
-            for (let i = 0; i < materials.length; i++) {
-                let usedItem = await getUsedMaterial(materials[i].id);
-                //console.log(usedItem);
-                if (usedItem.data[0] != undefined) {
-                    for (let j = 0; j < usedItem.data.length; j++) {
-                        //console.log(usedItem.data[j].totalNumber);
-                        if (usedItem.data[j].totalNumber != undefined)
-                            materials[i].totalValue -= usedItem.data[j].costValue * usedItem.data[j].totalNumber
-                        //usedItem.data[j].costValue * usedItem.data[j].totalNumber
-                    }
-                }
-            }
             result.errCode = 0;
             result.errMessage = "OK!";
             result.data = materials;
@@ -47,7 +25,7 @@ let getAllStorageInfo = (id) => {
         }
     })
 }
-///chua sua
+
 let deleteOneMaterial = (id) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -144,7 +122,7 @@ let addMaterial = (name, resID, measure) => {
                     await db.Material.create({
                         restaurantID: resID,
                         materialName: name,
-                        measure: measure
+                        measure: measure,
                     });
                     result.errCode = 0;
                     result.errMessage = "OK!";
@@ -164,26 +142,21 @@ let addStorage = (storage) => {
             let result = {};
             await db.Storage.create({
                 materialID: storage.materialID,
-                importValue: storage.importValue,
-                materialCost: storage.materialCost,
+                importValue: parseFloat(storage.importValue),
+                materialCost: parseFloat(storage.materialCost),
                 type: storage.type,
                 note: storage.note
             });
 
 
-            // let material = await db.Material.findOne({
-            //     where: { id: storage.materialID, }
-            // })
-            // if (material) {
+            let material = await db.Material.findOne({
+                where: { id: storage.materialID, }
+            })
+            if (material) {
+                material.value += parseFloat(storage.importValue);
+                await material.save();
+            }
 
-            //     let updateMenu = await db.Menu.findAll({
-            //         where: { status: 2, restaurantID: material.restaurantID }
-            //     }).then((items) => {
-            //         items.forEach((t) => {
-            //             t.update({ status: 1 });
-            //         });
-            //     });
-            // }
             result.errCode = 0;
             result.errMessage = "OK!";
 
@@ -199,10 +172,25 @@ let getImportedInfo = (id) => {
         try {
             let result = {};
             let imported = await db.Storage.findAll({
-                order: [
-                    ['createdAt', 'DESC'],
-                ],
                 where: { materialID: id },
+                attributes: {
+                    include: [ 
+                        [sequelize.fn('date_format',sequelize.col('updatedAt'),'%Y-%m-%d'),'date'],
+                        [sequelize.fn('sum',sequelize.literal('CASE WHEN type = 0 THEN importValue ELSE 0 END')),'importedValue'],
+                        [sequelize.fn('sum',sequelize.literal('CASE WHEN type = 0 THEN materialCost ELSE 0 END')),'totalCost'],
+                        [sequelize.fn('sum',sequelize.literal('CASE WHEN type = 1 THEN importValue ELSE 0 END')),'usedValue'],
+                        [sequelize.fn('sum',sequelize.literal('CASE WHEN type = 1 THEN importValue ELSE 0 END')),'usedValue'],
+                        [sequelize.fn('sum',sequelize.literal('CASE WHEN type = 2 THEN importValue ELSE 0 END')),'diffValue'],
+                        [sequelize.fn('sum',sequelize.literal('CASE WHEN type = 3 THEN importValue ELSE 0 END')),'baseValue'],
+                    ],
+                    exclude:['createdAt', 'updatedAt']
+                },
+                order: [
+                    [sequelize.fn('date_format',sequelize.col('updatedAt'),'%Y-%m-%d'), 'DESC'],
+                ],
+                group: [
+                    sequelize.fn('date_format',sequelize.col('updatedAt'),'%Y-%m-%d')
+                ]
             })
 
 
@@ -222,19 +210,29 @@ let getImportedInfo = (id) => {
         }
     })
 }
-
-let deleteImported = (id) => {
+//////////////////////
+let getImportedInDay = (id, date) => {
     return new Promise(async (resolve, reject) => {
         try {
             let result = {};
-            let imported = await db.Storage.findOne({
-                where: { id: id },
+            let imported = await db.Storage.findAll({
+                where :{
+                    materialID: id,
+                    updatedAt: {
+                        [Op.between]: [`${date} 00:00:00`, `${date} 23:59:59`]
+                    },
+                    type: 0
+                },
+                attributes: {
+                    include: [
+                        [sequelize.fn('date_format',sequelize.col('updatedAt'),'%H:%i:%s'),'time'],
+                    ],
+                    export: ['createdAt','updatedAt'],
+                }
             })
-            if (imported) {
-                await imported.destroy();
-                result.errCode = 0;
-                result.errMessage = "OK!";
-            }
+            result.errCode = 0;
+            result.errMessage = "OK!";
+            result.data=imported;
             resolve(result);
         } catch (e) {
             reject(e);
@@ -242,6 +240,44 @@ let deleteImported = (id) => {
     })
 }
 
+let getUsedInDay = (id, date) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let result = {};
+            let used = await db.Storage.findAll({
+                where :{
+                    materialID: id,
+                    updatedAt: {
+                        [Op.between]: [`${date} 00:00:00`, `${date} 23:59:59`]
+                    },
+                    type: 1
+                },
+                attributes: {
+                    include: [
+                        [sequelize.fn('sum',sequelize.col('importValue')),'value'],
+                        [sequelize.fn('date_format',sequelize.col('updatedAt'),'%H:%i:%s'),'time'],
+                        [sequelize.fn('sum',sequelize.literal(`CAST(SUBSTRING_INDEX(note ,' món ',1) as DECIMAL)`)),'num'],
+                        [sequelize.fn('SUBSTRING_INDEX',sequelize.col('note'),' món ',-1),'menuName'],
+                    ],
+                    exclude:['importValue','materialCost','note','createdAt','updatedAt']
+                },
+                group: [
+                    sequelize.fn('date_format',sequelize.col('updatedAt'),'%H:%i:%s'),
+                ],
+            })
+
+
+            result.errCode = 0;
+            result.errMessage = "OK!";
+            result.data = used;
+
+            resolve(result);
+        } catch (e) {
+            reject(e);
+        }
+    })
+}
+///////////////////////
 let getMaterial = (id) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -260,88 +296,6 @@ let getMaterial = (id) => {
             result.errCode = 0;
             result.errMessage = "OK!";
             result.data = materials;
-            resolve(result);
-        } catch (e) {
-            reject(e);
-        }
-    })
-}
-
-let checkStorage = (menu, resID) => {
-    return new Promise(async (resolve, reject) => {
-        try {
-            let result = true;
-
-            let storageData = await getAllStorageInfo(resID);
-            for (let i = 0; i < storageData.data.length; i++) {
-                for (let j = 0; j < menu.materials.length; j++) {
-                    //console.log(storageData.data[i].id == menu.materials[j].materialID);
-                    if (storageData.data[i].id == menu.materials[j].materialID && (menu.number * menu.materials[j].costValue - storageData.data[i].totalValue) > 0) {
-
-                        result = false;
-                    }
-                }
-            }
-            resolve(result);
-        } catch (e) {
-            reject(e);
-        }
-    })
-}
-
-let getUsedMaterial = (id) => {
-    return new Promise(async (resolve, reject) => {
-        try {
-            let result = {};
-            let material = await db.MenuMaterial.findAll({
-                where: { materialID: id },
-                attributes: {
-                    exclude: ['createdAt', 'updatedAt'],
-                    include: [
-                        [sequelize.col('Menu.menuName'), 'menuName'],
-                    ],
-                },
-                include: [{
-                    model: db.Menu,
-                    attributes: []
-                    // required: true
-                }],
-                raw: true,
-                nest: true,
-            })
-
-            for (let i = 0; i < material.length; i++) {
-                let item = await db.Item.findAll({
-
-                    where: {
-                        menuID: material[i].menuID,
-                        status: { [Op.or]: [1, 2] },
-
-                    },
-                    attributes: {
-                        include: [
-                            [sequelize.fn('sum', sequelize.col('itemNumber')), 'totalNumber'],
-                        ],
-                    },
-                    include: [{
-                        model: db.Order,
-                        where: { status: { [Op.ne]: 2 } },
-                        attributes: ['id', 'status']
-                    }],
-                    group: 'menuID',
-                    raw: true,
-                })
-                //console.log(item);
-                if (item[0]) {
-                    material[i].totalNumber = parseInt(item[0].totalNumber);
-                }
-            }
-
-
-            result.errCode = 0;
-            result.errMessage = "OK!";
-            result.data = material;
-
             resolve(result);
         } catch (e) {
             reject(e);
@@ -416,12 +370,21 @@ let updateStorage = (data) => {
         try {
             let result = {};
             const promis = data.map( async (data)=> {
+                if(data.value != 0){
+                    await addStorage({
+                        materialID: data.id,
+                        importValue: parseFloat(data.value),
+                        materialCost: 0,
+                        type: 2, ///chênh lệch với lượng thực tế
+                        note: data.value > 0 ? 'dư thừa':'hao hụt'
+                    });
+                }
                 await db.Storage.create({
                     materialID: data.id,
-                    importValue: parseFloat(data.value),
+                    importValue: +parseFloat(data.total+data.value).toFixed(2),
                     materialCost: 0,
-                    type: 1,
-                    note: 'hao hụt'
+                    type: 3, /// lượng tồn kho do máy tính toán
+                    note: 'tồn kho'
                 });
             })
 
@@ -439,7 +402,7 @@ let updateStorage = (data) => {
 
 module.exports = {
     getAllStorageInfo, deleteOneMaterial, updateMaterial, addMaterial,
-    addStorage, getImportedInfo, deleteImported, getMaterial,
-    checkStorage, getUsedMaterial, getCostData, addNewCost, deleteCost,
+    addStorage, getImportedInfo, getImportedInDay, getMaterial,
+    getUsedInDay, getCostData, addNewCost, deleteCost,
     updateStorage,
 };

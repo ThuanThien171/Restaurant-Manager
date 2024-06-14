@@ -20,7 +20,8 @@ module.exports = (sequelize, DataTypes) => {
         menuName: DataTypes.STRING,
         image: DataTypes.STRING,
         status: DataTypes.INTEGER,
-        price: DataTypes.INTEGER
+        price: DataTypes.INTEGER,
+        process: DataTypes.BOOLEAN
     }, {
         sequelize,
         modelName: 'Menu',

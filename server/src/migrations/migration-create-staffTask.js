@@ -9,7 +9,7 @@ module.exports = {
                 primaryKey: true,
                 type: Sequelize.INTEGER
             },
-            tableID: {
+            areaID: {
                 type: Sequelize.INTEGER
             },
             userID: {

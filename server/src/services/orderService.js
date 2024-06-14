@@ -19,12 +19,7 @@ let getOrderRealTime = (id) => {
                 include: [{
                     model: db.Table,
                     as: 'Table',
-                    attributes:['id', 'tableName'],
-                    include: [{
-                        model: db.StaffTask,
-                        as: 'StaffTask',
-                        attributes: ['tableID', 'userID'],
-                    }],
+                    attributes:['id', 'tableName','areaID'],
                     nest: true,
                     raw: true,
                     // required: true
@@ -110,25 +105,7 @@ let addNewOrder = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
             let result = {};
-            // let inValidItem = [];
-
-            // for (let i = 0; i < data.menus.length; i++) {
-            //     data.menus[i].materials = await db.MenuMaterial.findAll({
-            //         where: { menuID: data.menus[i].id },
-            //         raw: true
-            //     })
-
-            // }
-            // for (let i = 0; i < data.menus.length; i++) {
-            //     if (data.menus[i].materials[0] != undefined) {
-            //         let check = await storageService.checkStorage(data.menus[i], data.resID);
-            //         if (check == false) inValidItem.push({ name: data.menus[i].data.menuName, number: data.menus[i].number, id: data.menus[i].id });
-            //     }
-            // }
-
-            // if (inValidItem[0] == undefined) {
             
-
             let updateTable = await db.Table.findOne({
                 where: { id: data.tableID, }
             })
@@ -148,7 +125,7 @@ let addNewOrder = (data) => {
                         menuID: data.menus[i].id,
                         staffID: data.userID,
                         itemNumber: data.menus[i].number,
-                        status: 0,
+                        status: (data.menus[i].data.process==0) ? 3 : 0,
                         note: data.menus[i].note,
                     })
 
@@ -250,6 +227,7 @@ let getOrderInfo = (data) => {
                             [sequelize.col('Menu.menuName'), 'menuName'],
                             [sequelize.col('Menu.image'), 'image'],
                             [sequelize.col('Menu.price'), 'price'],
+                            [sequelize.col('Menu.process'), 'process'],
                             [sequelize.fn('sum', sequelize.col('itemNumber')), 'itemNumber']
                         ]
                     },
@@ -289,7 +267,7 @@ let getOrderInfo = (data) => {
     })
 }
 
-let cancelOrder = (id) => {
+let cancelOrder = (id, staff) => {
     return new Promise(async (resolve, reject) => {
         try {
             let result = {};
@@ -310,6 +288,7 @@ let cancelOrder = (id) => {
                 })
 
                 orders.status = 2;
+                orders.staff = staff;
                 await orders.save();
 
                 table.status = 0;
@@ -339,7 +318,7 @@ let cancelOrder = (id) => {
     })
 }
 
-let paymentOrder = (id) => {
+let paymentOrder = (id, staff) => {
     return new Promise(async (resolve, reject) => {
         try {
             let result = {};
@@ -361,6 +340,7 @@ let paymentOrder = (id) => {
 
                 // update order
                 orders.status = 1;
+                orders.staff = staff;
                 await orders.save();
 
                 // update table
@@ -397,12 +377,13 @@ let updateOrder = (data) => {
             let result = {};
 
             for (let i = 0; i < data.menus.length; i++) {
+                let menu = await db.Menu.findOne({where: {id: data.menus[i].menuID}})
                 await db.Item.create({
                     orderID: data.orderID,
                     menuID: data.menus[i].menuID,
                     staffID: data.staffID,
                     itemNumber: data.menus[i].itemNumber,
-                    status: 0,
+                    status: (menu.process == 0) ? 3: 0,
                     note: "",
                 })
             }
@@ -427,7 +408,7 @@ let addMenuToOrder = (data) => {
                     menuID: data.menus[i].id,
                     staffID: data.userID,
                     itemNumber: data.menus[i].number,
-                    status: 0,
+                    status:  (data.menus[i].data.process==0) ? 3 : 0,
                     note: data.menus[i].note ? data.menus[i].note : "...",
                 })
             }
@@ -449,13 +430,22 @@ let getUnserveItem = (id) => {
             let order = await db.Order.findOne({
                 where: { tableID: id, status: 0 }
             })
+            /*item status
+            0: order, chờ bếp duyệt
+            1: đã giao
+            2: hủy khi tách đơn
+            3: bếp chuẩn bị xong
+            4: bếp nhận đơn và đang chế biến
+            => 0 -> 4 -> 3 -> 1 ~ món cần chế biến
+               0 -> 3 -> 1 ~ món có sẵn
+            */
             if (order) {
 
                 let items = await db.Item.findAll({
                     where: {
                         orderID: order.id,
                         status: {
-                            [Op.or]: [0, 3]
+                            [Op.or]: [0, 3, 4]
                         }
                     },
 
@@ -554,12 +544,49 @@ let updateItem = (id) => {
                 where: { id: id },
             })
             if (item) {
-                if (item.status == 0) item.status = 3;
+                if (item.status == 0) item.status = 4;
+                else if (item.status == 4) {
+                    item.status = 3;
+                    let materials = await db.MenuMaterial.findAll({
+                        where: {
+                            menuID: item.menuID,
+                        },
+                        attributes: ['materialID', 'costValue',
+                            [sequelize.col('Menu.menuName'),'menuName'],
+                            [sequelize.col('Material.measure'),'measure']
+                        ],
+                        include: [
+                            {
+                                model: db.Menu,
+                                attributes: [],
+                            },
+                            {
+                                model: db.Material,
+                                attributes: [],
+                            }
+                        ],
+                        nest: true,
+                        raw: true,
+                    })
+                    materials.map(async data => {
+                        await storageService.addStorage({
+                            materialID: data.materialID,
+                            importValue: -data.costValue*item.itemNumber,
+                            materialCost: 0,
+                            type: 1, ///Lượng nguyên liệu đã sử dụng
+                            note: `${item.itemNumber} món ${data.menuName}`
+                        })
+                    })
+
+                }
                 else if (item.status == 3) item.status = 1;
                 await item.save();
 
                 result.errCode = 0;
                 result.errMessage = "OK!";
+            }else {
+                result.errCode = 1;
+                result.errMessage = "Đơn đã bị hủy";
             }
             resolve(result);
         } catch (e) {
@@ -572,12 +599,19 @@ let deleteItem = (id) => {
     return new Promise(async (resolve, reject) => {
         try {
             let result = {};
-
-            await db.Item.destroy({
-                where: { id: id }
+            let item = await db.Item.findOne({
+                where: { id: id },
             })
-            result.errCode = 0;
-            result.errMessage = "OK!";
+            if(item.status == 4){
+                result.errCode = 1;
+                result.errMessage = "Món đang được chuẩn bị!";
+            }else{
+                await db.Item.destroy({
+                    where: { id: id }
+                })
+                result.errCode = 0;
+                result.errMessage = "OK!";
+            }
             resolve(result);
         } catch (e) {
             reject(e);
@@ -692,12 +726,18 @@ let splitOrder = (data) => {
     })
 }
 
-let getHistoryInfo = (id) => {
+let getHistoryInfo = (id,start, end) => {
     return new Promise(async (resolve, reject) => {
         try {
             let result = {};
             let orders = await db.Order.findAll({
-                where: { restaurantID: id, status: { [Op.ne]: 0 } },
+                where: { 
+                    restaurantID: id, 
+                    status: { [Op.ne]: 0 },
+                    updatedAt: {
+                        [Op.between]: [start, `${end} 23:59:59`]
+                    },
+                },
                 attributes: {
                     include: [
                         [sequelize.col('Table.tableName'), 'tableName'],
@@ -906,7 +946,7 @@ let getBarChartData = (data) => {
             let saleData = [];
             let materialData = [];
             let costData = [];
-            let month = [1,2,3,4,5,6,7,8,9,10,11,12];
+            let month = [0,1,2,3,4,5,6,7,8,9,10,11];
 
             const promis = month.map(async (i) => {
                 // lay data doanh thu
@@ -917,7 +957,7 @@ let getBarChartData = (data) => {
                         status: 1,
                         [Op.and]: [
                             //sequelize.fn(''),
-                            sequelize.where(sequelize.fn('MONTH', sequelize.fn('CONVERT_TZ', sequelize.col('updatedAt'), '+00:00', '+07:00')), i),
+                            sequelize.where(sequelize.fn('MONTH', sequelize.fn('CONVERT_TZ', sequelize.col('updatedAt'), '+00:00', '+07:00')), i+1),
                             sequelize.where(sequelize.fn('YEAR', sequelize.fn('CONVERT_TZ', sequelize.col('updatedAt'), '+00:00', '+07:00')), data.year),
                         ],
                     },
@@ -944,7 +984,7 @@ let getBarChartData = (data) => {
                             type: 0,
                             [Op.and]: [
                                 //sequelize.fn(''),
-                                sequelize.where(sequelize.fn('MONTH', sequelize.fn('CONVERT_TZ', sequelize.col('updatedAt'), '+00:00', '+07:00')), i),
+                                sequelize.where(sequelize.fn('MONTH', sequelize.fn('CONVERT_TZ', sequelize.col('updatedAt'), '+00:00', '+07:00')), i+1),
                                 sequelize.where(sequelize.fn('YEAR', sequelize.fn('CONVERT_TZ', sequelize.col('updatedAt'), '+00:00', '+07:00')), data.year),
                             ],
                         },
@@ -967,7 +1007,7 @@ let getBarChartData = (data) => {
                         restaurantID: data.resID,
                         [Op.and]: [
                             //sequelize.fn(''),
-                            sequelize.where(sequelize.fn('MONTH', sequelize.fn('CONVERT_TZ', sequelize.col('updatedAt'), '+00:00', '+07:00')), i),
+                            sequelize.where(sequelize.fn('MONTH', sequelize.fn('CONVERT_TZ', sequelize.col('updatedAt'), '+00:00', '+07:00')), i+1),
                             sequelize.where(sequelize.fn('YEAR', sequelize.fn('CONVERT_TZ', sequelize.col('updatedAt'), '+00:00', '+07:00')), data.year),
                         ],
                     },
@@ -1110,11 +1150,56 @@ let getItemnumberIn7Day = (menuID, resID) => {
     })
 }
 
+let getProcessingItem = (id) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let result = {};
+            let menus = await db.Menu.findAll({
+                where: { restaurantID: id, status: 1, process: 1 },
+                attributes: {
+                    exclude: ['createdAt','updatedAt'],
+                    include: [
+                        [sequelize.fn('sum', sequelize.col('Items.itemNumber')), 'totalItem'],
+                    ]
+                },
+                include: {
+                    model: db.Item,
+                    where: {status: 4},
+                    attributes: [],
+                    require: false,
+                },
+                group:['id'],
+                nest: true,
+                raw: true,
+            })
+            if(menus[0] !== undefined){
+            let promis = menus.map(async (data)=> {
+                data.Items = await db.Item.findAll({
+                    where: { menuID: data.id, status: 4 },
+                attributes: ['id'],
+                nest: true,
+                raw: true,
+                })
+            })
+            await Promise.all(promis)
+            }
+            result.errCode = 0;
+            result.errMessage = "OK!";
+            result.data = menus;
+
+            resolve(result);
+        } catch (e) {
+            reject(e);
+        }
+    })
+}
+
 module.exports = {
     getOrderRealTime, getTotalPrice, addNewOrder,
     getOrderInfo, paymentOrder, cancelOrder,
     updateOrder, addMenuToOrder, getUnserveItem,
     getKitchenInfo, updateItem, deleteItem, changeTable,
     splitOrder, getHistoryInfo, getOrderHistory,
-    deleteOrder, getBarChartData, getLineChartData
+    deleteOrder, getBarChartData, getLineChartData,
+    getProcessingItem
 };

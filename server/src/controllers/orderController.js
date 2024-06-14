@@ -63,7 +63,7 @@ let getOrderInfo = async (req, res) => {
 
 let cancelOrder = async (req, res) => {
 
-    let orderData = await orderService.cancelOrder(req.body.id)
+    let orderData = await orderService.cancelOrder(req.body.id,req.body.staff)
 
     return res.status(200).json({
         errCode: orderData.errCode,
@@ -74,7 +74,7 @@ let cancelOrder = async (req, res) => {
 
 let paymentOrder = async (req, res) => {
 
-    let orderData = await orderService.paymentOrder(req.body.id)
+    let orderData = await orderService.paymentOrder(req.body.id, req.body.staff)
 
     return res.status(200).json({
         errCode: orderData.errCode,
@@ -193,7 +193,7 @@ let splitOrder = async (req, res) => {
 
 let getHistoryInfo = async (req, res) => {
 
-    let orderData = await orderService.getHistoryInfo(req.body.id)
+    let orderData = await orderService.getHistoryInfo(req.body.id,req.body.fromDate,req.body.toDate)
         .then(async (orderData) => {
             for (let i = 0; i < orderData.data.length; i++) {
                 orderData.data[i].totalPrice = await orderService.getTotalPrice(orderData.data[i].id);
@@ -256,11 +256,23 @@ let getLineChartData = async (req, res) => {
 
 }
 
+let getProcessingItem = async (req, res) => {
+
+    let orderData = await orderService.getProcessingItem(req.body.id)
+
+    return res.status(200).json({
+        errCode: orderData.errCode,
+        errMessage: orderData.errMessage,
+        data: orderData.data ? orderData.data : {}
+    })
+
+}
+
 module.exports = {
     getOrderRealTime, addNewOrder, getOrderInfo,
     cancelOrder, paymentOrder, updateOrder,
     addMenuToOrder, getUnserveItem, getKitchenInfo,
     updateItem, deleteItem, changeTable, splitOrder,
     getHistoryInfo, getOrderHistory, deleteOrder,
-    getBarChartData, getLineChartData
+    getBarChartData, getLineChartData, getProcessingItem
 };

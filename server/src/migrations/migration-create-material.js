@@ -18,6 +18,10 @@ module.exports = {
             measure: {
                 type: Sequelize.STRING
             },
+            value: {
+                type: Sequelize.FLOAT,
+                defaultValue: 0,
+            },
             createdAt: {
                 allowNull: false,
                 type: Sequelize.DATE

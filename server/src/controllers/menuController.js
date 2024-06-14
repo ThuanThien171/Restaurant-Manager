@@ -63,13 +63,13 @@ let changeStatusMenu = async (req, res) => {
     })
 }
 
-let deleteTable = async (req, res) => {
-    let id = req.body.id
-    let areaData = await areaService.deleteTable(id);
+let getDataTable = async (req, res) => {
+    let menus = await menuService.getDataTable(req.body.resID, req.body.fromDate, req.body.toDate);
 
     return res.status(200).json({
-        errCode: areaData.errCode,
-        errMessage: areaData.errMessage,
+        errCode: menus.errCode,
+        errMessage: menus.errMessage,
+        data: menus.data
     })
 }
 
@@ -83,4 +83,4 @@ let addTable = async (req, res) => {
     })
 }
 
-module.exports = { getAllMenu, deleteOneMenu, postNewMenu, getMenuDetail, updateMenu, changeStatusMenu };
+module.exports = { getAllMenu, deleteOneMenu, postNewMenu, getMenuDetail, updateMenu, changeStatusMenu, getDataTable };

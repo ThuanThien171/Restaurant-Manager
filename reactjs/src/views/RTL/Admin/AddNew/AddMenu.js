@@ -28,7 +28,7 @@ import {
     FormErrorMessage,
     FormHelperText,
     useColorModeValue,
-    Center,
+    Center, Switch
 } from "@chakra-ui/react";
 
 // Custom components
@@ -49,7 +49,7 @@ function AddMenu() {
     const [price, setPrice] = useState(0);
     const [image, setImage] = useState('');
     const [cost, setCost] = useState([]);
-
+    const [process, setProcess] = useState(0);
 
     const [isLoading, setIsLoading] = useState(false);
     const imgUrlUndefinded = "https://firebasestorage.googleapis.com/v0/b/thienproject-2a65d.appspot.com/o/Images%2FMenu%2Fundefined?"
@@ -117,8 +117,8 @@ function AddMenu() {
             image: imageUrl,
             status: 1,
             price: price,
-            costData: selectedMaterial
-
+            costData: selectedMaterial,
+            process: process
         };
         //Add new song to database
         console.log(data);
@@ -168,6 +168,12 @@ function AddMenu() {
                             placeholder="Nhập tên món mới"
                         />
                         <br /><br />
+                        <Flex style={{ margin: "10px 0px", }}>
+                            <FormLabel fontWeight="semibold" style={{ margin: "0px", alignItems: "flex-end" }}>Món có sẵn</FormLabel>
+                            <Switch marginX="20px" colorScheme="teal" size="lg" id="sw1" isChecked={process} onChange={() => { setProcess(1 - process); }}></Switch>
+                            <FormLabel fontWeight="semibold" style={{ margin: "0px", alignItems: "flex-end" }}>Món chế biến</FormLabel>
+                        </Flex>
+                        <br />
                         <FormLabel fontWeight="semibold">Nguyên liệu:</FormLabel>
 
                         <Select

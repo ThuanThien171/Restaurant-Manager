@@ -120,7 +120,7 @@ export default function OrderHistory() {
 						<Flex w="100%" alignItems="Center" flexDirection={{ sm: "column", md: "row" }} mb={"5px"}>
 							<Flex w={{ sm: "100%", md: "40%" }} flexDirection={"column"}>
 								<Text fontSize="xl" color={textColor} fontWeight="bold">Bàn: {order.tableName}</Text>
-								<Text fontSize="md" color={textColor} fontWeight="normal">Nhân viên: {order.staff}</Text>
+								<Text fontSize="md" color={textColor} fontWeight="normal">Thu ngân: {order.staff}</Text>
 
 							</Flex>
 							<Flex w={{ sm: "100%", md: "60%" }} flexDirection={"column"}>
@@ -160,32 +160,41 @@ export default function OrderHistory() {
 												id={index + "t1"}
 											>
 
-												<Flex p="5px" w={"100%"} flexDirection={"row"} alignItems="center">
+												<Flex p="5px" w={"100%"} flexDirection={{sm:"column" ,md:"row"}} alignItems="center" justifyContent={"space-between"}>
+												<Flex flexDirection={{ sm: "row", md: "column" }} alignItems={ "center" } w={{sm:'100%'}} justifyContent={"space-evenly"}>
 													<Text
-														w={"45%"}
-														fontSize="md"
+														w={"100%"}
+														fontSize="lg"
 														color={textColor}
 														fontWeight="bold"
 													>
 														{data.menuName}
 													</Text>
+													<Text
+														w={"100%"}
+														fontSize="sm"
+														color={textColor}
+														fontWeight="semibold"
+													>
+													Giá: {Number(data.price).toLocaleString('vi-VN', { style: 'currency', currency: 'VND', }) || 0}
+													</Text>
+												</Flex>
+													<Flex flexDirection={{ sm: "row", md: "column" }} alignItems={"center" } w={{sm:'100%'}} justifyContent={"space-evenly"}>
+													<Text
+														w={"100%"}
+														fontSize="sm"
+														color={textColor}
+														fontWeight="semibold"
+													>
+														Số lượng: {data.itemNumber || 0}</Text>
 
-													<Flex flexDirection={{ sm: "column", md: "row" }} alignItems={{ sm: "flex-start", md: "center" }} w={"55%"} justifyContent={"space-evenly"}>
 														<Text
-
-															fontSize="sm"
-															color={textColor}
-															fontWeight="semibold"
-															m={"5px"}
-														>Số lượng: {data.itemNumber || 0}</Text>
-
-														<Text
-
-															fontSize="sm"
-															color={textColor}
-															fontWeight="semibold"
-															m={"5px"}
-														>Giá: {Number(data.price * data.itemNumber).toLocaleString('vi-VN', { style: 'currency', currency: 'VND', }) || 0}
+														w={"100%"}
+														fontSize="sm"
+														color={textColor}
+														fontWeight="semibold"
+													>
+														Tổng: {Number(data.price * data.itemNumber).toLocaleString('vi-VN', { style: 'currency', currency: 'VND', }) || 0}
 														</Text>
 													</Flex>
 
@@ -214,7 +223,7 @@ export default function OrderHistory() {
 												id={index + "t2"}
 											>
 
-												<Flex p="5px" w={"100%"} flexDirection={{ sm: "column", md: "row" }} alignItems="center">
+												<Flex p="5px" w={"100%"} flexDirection={{sm: "column", md: "row" }} alignItems="center">
 													<Text
 														w={{ sm: "100%", md: "30%" }}
 														fontSize="md"
@@ -225,29 +234,27 @@ export default function OrderHistory() {
 														{moment(data.createdAt).tz("Asia/Ho_Chi_Minh").format('D/M/YYYY, H:mm:ss ')}
 													</Text>
 
-													<Flex flexDirection={{ sm: "column", md: "row" }} alignItems={{ sm: "flex-start", md: "center" }} w={{ sm: "100%", md: "70%" }} justifyContent={"space-evenly"}>
+													<Flex flexDirection={ "row" } alignItems={"center" } w={{ sm: "100%", md: "70%" }} justifyContent={"space-evenly"} flexWrap={'wrap'} rowGap={'5px'}>
 														<Text
-															w={{ sm: "100%", md: "30%" }}
+															w={{ sm: "50%", md: "30%" }}
 															fontSize="md"
 															color={textColor}
-															fontWeight="normal"
-															m={"5px"}
+															fontWeight="sm"
 														>
 															Món: {data.menuName}
 														</Text>
-														<Flex w={{ sm: "100%", md: "30%" }} alignItems={"center"}>
+														<Flex w={{ sm: "50%", md: "30%" }} alignItems={"center"}>
 															<Text
 
 																fontSize="sm"
 																color={textColor}
-																fontWeight="normal"
-																m={"5px"}
+																fontWeight="sm"
 															>Số lượng: </Text>
 															<Text
 
 																fontSize="sm"
 																color={data.status == 2 ? textColor2 : textColor}
-																fontWeight="normal"
+																fontWeight="sm"
 															>
 																{data.itemNumber || 0}</Text>
 														</Flex>
@@ -256,7 +263,6 @@ export default function OrderHistory() {
 															fontSize="sm"
 															color={textColor}
 															fontWeight="normal"
-															m={"5px"}
 														>Nhân viên: {data.staff}
 														</Text>
 													</Flex>
@@ -264,7 +270,7 @@ export default function OrderHistory() {
 
 												</Flex>
 												<Flex p="5px" w={"100%"}>
-													<Text fontSize={"md"} color={textColor}>Ghi chú: {data.note ? data.note : "..."}</Text>
+													<Text fontSize={"sm"} color={textColor}>Ghi chú: {data.note ? data.note : "..."}</Text>
 												</Flex>
 
 											</Flex>

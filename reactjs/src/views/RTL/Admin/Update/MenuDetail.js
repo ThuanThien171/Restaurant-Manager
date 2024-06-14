@@ -56,6 +56,7 @@ function MenuDetail() {
 
     const [menuID, setMenuID] = useState(0);
     const [status, setStatus] = useState(0);
+    const [process, setProcess] = useState(0);
 
     const [isLoading, setIsLoading] = useState(false);
     const imgUrlUndefinded = "https://firebasestorage.googleapis.com/v0/b/thienproject-2a65d.appspot.com/o/Images%2FMenu%2Fundefined?"
@@ -79,7 +80,7 @@ function MenuDetail() {
             setPrice(res.data.menu.price);
             setImage(res.data.menu.image);
             (res.data.menu.status == 2) ? setStatus(0) : setStatus(res.data.menu.status);
-
+            setProcess(res.data.menu.process)
             setMenuID(res.data.menu.id);
         }
     }
@@ -137,8 +138,8 @@ function MenuDetail() {
             image: (imageUrl != "") ? imageUrl : image,
             status: status,
             price: price,
-            costData: selectedMaterial
-
+            costData: selectedMaterial,
+            process: process
         };
 
         console.log(data);
@@ -147,7 +148,7 @@ function MenuDetail() {
             setIsLoading(false);
             swal({
                 title: "Thành công!",
-                text: "Thêm món thành công",
+                text: "Cập nhật thành công",
                 icon: "success",
                 button: "OK!",
             })
@@ -191,6 +192,12 @@ function MenuDetail() {
                         <Flex style={{ margin: "10px 0px", }}>
                             <FormLabel fontWeight="semibold" style={{ margin: "0px", alignItems: "flex-end" }}>{(status == 0) ? 'Kích hoạt' : 'Hủy kích hoạt'}:</FormLabel>
                             <Switch marginStart="20px" colorScheme="teal" size="lg" id="sw1" isChecked={status} onChange={() => { setStatus(1 - status); }}></Switch>
+                        </Flex>
+                        <br />
+                        <Flex style={{ margin: "10px 0px", }}>
+                            <FormLabel fontWeight="semibold" style={{ margin: "0px", alignItems: "flex-end" }}>Món có sẵn</FormLabel>
+                            <Switch marginX="20px" colorScheme="teal" size="lg" id="sw1" isChecked={process} onChange={() => { setProcess(1 - process); }}></Switch>
+                            <FormLabel fontWeight="semibold" style={{ margin: "0px", alignItems: "flex-end" }}>Món chế biến</FormLabel>
                         </Flex>
                         <br />
                         <FormLabel fontWeight="semibold">Nguyên liệu:</FormLabel>

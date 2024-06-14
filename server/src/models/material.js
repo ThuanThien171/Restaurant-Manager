@@ -19,6 +19,7 @@ module.exports = (sequelize, DataTypes) => {
         restaurantID: DataTypes.INTEGER,
         materialName: DataTypes.STRING,
         measure: DataTypes.STRING,
+        value: DataTypes.FLOAT,
     }, {
         sequelize,
         modelName: 'Material',

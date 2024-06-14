@@ -13,7 +13,6 @@ module.exports = (sequelize, DataTypes) => {
             // define association here
             Table.belongsTo(models.Area, { foreignKey: 'areaID' })
             Table.hasMany(models.Order, { foreignKey: 'tableID' })
-            Table.hasOne(models.StaffTask, { foreignKey: 'tableID' })
         }
     }
     Table.init({

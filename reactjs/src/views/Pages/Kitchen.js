@@ -30,6 +30,7 @@ import actionAddMenu from "redux/actions/actionAddMenu";
 import actionAddOrder from "redux/actions/actionAddOrder";
 function Kitchen() {
 	const [items, setItems] = useState([]);
+	const [processItem,setProcessItem] = useState([]);
 	const [menu, setMenu] = useState([]);
 	const history = useHistory();
 	const dispatch = useDispatch();
@@ -46,11 +47,18 @@ function Kitchen() {
 		dispatch(actionAddOrder(0));
 		getKitchenInfo();
 		getAllMenuData();
+		getProcessingItem();
 	}, [])
 	const getKitchenInfo = async () => {
 		const res = await axios.post("/api/getKitchenInfo", { id: userInfo.restaurantID });
 		if (res.data.errCode === 0) {
 			setItems(res.data.data);
+		}
+	}
+	const getProcessingItem = async () => {
+		const res = await axios.post("/api/getProcessingItem", { id: userInfo.restaurantID });
+		if (res.data.errCode === 0) {
+			setProcessItem(res.data.data);
 		}
 	}
 	const getAllMenuData = async () => {
@@ -100,6 +108,20 @@ function Kitchen() {
 		}
 	}
 
+	const updateProcessItem = async(data = []) => {
+		let promis = data.map(async (i) => {
+			await axios.post("/api/updateItem", { id: i.id });
+		})
+		await Promise.all(promis);
+		getProcessingItem();
+		swal({
+			title: "Ok!",
+			text: "Thành công",
+			icon: "success",
+			button: "OK!",
+		})
+	}
+
 	return (
 		<Flex direction="column" pt={{ base: "120px", md: "75px" }}>
 			<Card overflowX={{ xl: "hidden" }}>
@@ -111,10 +133,37 @@ function Kitchen() {
 				<CardBody flexWrap="wrap">
 					<Tabs size="sm" colorScheme="cyan" width="100%" variant='enclosed' isFitted >
 						<TabList>
-							<Tab _focus={{ boxShadow: "none", }} >Đơn</Tab>
-							<Tab _focus={{ boxShadow: "none", }} >Menu</Tab>
+							<Tab _focus={{ boxShadow: "none", }} onClick={()=>{	getProcessingItem();}}>Đang chờ</Tab>
+							<Tab _focus={{ boxShadow: "none", }} onClick={()=>{	getKitchenInfo();}}>Đơn</Tab>
+							<Tab _focus={{ boxShadow: "none", }} onClick={()=>{	getAllMenuData();}}>Menu</Tab>
 						</TabList>
 						<TabPanels>
+							<TabPanel>
+							{processItem.map((data,index) => {
+												return (
+													<Flex p=".3rem" w="100%" m="4px 0px"
+														flexWrap={'wrap'}
+														alignItems={"center"}
+														justifyContent={"space-between"}
+														style={{ border: "1px solid #38B2AC" }}
+														borderRadius="10px"
+														gap={'20px'}
+														key={index}
+														id={data.id}
+													>
+			
+														<Text color={textColor} fontSize={"lg"} fontWeight={"semibold"}>Món: {data.menuName}</Text>	
+														<Text color={textColor} fontSize={"md"} fontWeight={"hairlight"}>Số lượng: {data.totalItem}</Text>
+													
+														<Button colorScheme="green" 
+															onClick={() => {updateProcessItem(data.Items)}}
+														><CheckCircleIcon mr={"3px"} />Hoàn thành</Button>
+														
+													</Flex>
+												);
+											})
+								}
+							</TabPanel>
 							<TabPanel>
 								{items.map((data) => {
 									if (data.item[0] != undefined) {
@@ -132,24 +181,25 @@ function Kitchen() {
 														key={index}
 														id={item.id}
 													>
-														<Flex flexWrap={"wrap"} alignItems={"center"} h="100%" ms="20px">
-															<Flex flexDirection={"column"} m="5px 20px">
-																<Text color={textColor} fontSize={"lg"} fontWeight={"semibold"}>Bàn: {data.tableName}</Text>
-																<Text color={textColor} fontSize={"sm"} fontWeight="thin">{moment(item.createdAt).tz("Asia/Ho_Chi_Minh").format('D-M-YYYY, h:mm:ss a')}</Text>
+														<Flex flexWrap={"wrap"} alignItems={"center"} h="100%" w={{sm:'100%', md:'60%'}}>
+															
+															<Flex flexDirection={"column"} w='100%' p="5px 20px">
+																<Text color={textColor} fontSize={"sm"} fontWeight="thin">{moment(item.createdAt).tz("Asia/Ho_Chi_Minh").format('D-M-YYYY, h:mm:ss a')}</Text>													
+																															
 															</Flex>
-															<Flex flexDirection={"column"} m="5px 20px">
-																<Text color={textColor} fontSize={"lg"} fontWeight={"semibold"}>Món: {item.menuName}</Text>
-																<Text color={textColor} fontSize={"md"} fontWeight={"hairlight"}>Số lượng: {item.itemNumber}</Text>
+															<Flex flexDirection={{sm: "column", md: 'row'}} p="5px 20px" w='100%' justifyContent={'space-between'} alignItems={'center'} me="40px">
+															<Text color={textColor} fontSize={"lg"} fontWeight={"semibold"}>Món: {item.menuName}</Text>	
+															<Text color={textColor} fontSize={"md"} fontWeight={"hairlight"}>Số lượng: {item.itemNumber}</Text>
 															</Flex>
 															<Flex m="5px 20px" w="100%">
 																<Text color={textColor} fontSize={"md"} fontWeight={"hairlight"}>Ghi chú: {item.note || "..."}</Text>
 															</Flex>
 
 														</Flex>
-														<Flex m={"10px"} w="unset" me={{ sm: "5px", md: "25px" }}>
+														<Flex m={"10px"} w={{sm: '100%', md:'40%'}} justifyContent={'space-between'} paddingX={'10px'}>
 															<Button colorScheme="green" mr="5px"
 																onClick={() => { updateItem(item.id); }}
-															><CheckCircleIcon mr={"3px"} />Đã xong</Button>
+															><CheckCircleIcon mr={"3px"} />Nhận đơn</Button>
 															<Button colorScheme="red" ml={"5px"}
 																onClick={() => { deleteItem(item.id); }}
 															><CloseIcon mr={"3px"} />Hủy</Button>
@@ -162,6 +212,7 @@ function Kitchen() {
 									}
 								})}
 							</TabPanel>
+							
 							<TabPanel>
 								{menu.map((data, index) => {
 									return (

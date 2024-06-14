@@ -41,6 +41,7 @@ router.post('/api/addTable', areaController.addTable);
 router.post('/api/getAvailableTable', areaController.getAvailableTable);
 router.post('/api/deleteStaffTask', areaController.deleteStaffTask);
 router.post('/api/updateStaffTask', areaController.updateStaffTask);
+router.post('/api/getAllStaffTask', areaController.getAllStaffTask);
 
 //menu api
 router.post('/api/getAllMenu', menuController.getAllMenu);
@@ -49,6 +50,7 @@ router.post('/api/postNewMenu', menuController.postNewMenu);
 router.post('/api/getMenuDetail', menuController.getMenuDetail);
 router.post('/api/updateMenu', menuController.updateMenu);
 router.post('/api/changeStatusMenu', menuController.changeStatusMenu);
+router.post('/api/getDataTable', menuController.getDataTable);
 
 //storage-material api
 router.post('/api/getAllStorageInfo', storageController.getAllStorageInfo);
@@ -58,13 +60,12 @@ router.post('/api/updateMaterial', storageController.updateMaterial);
 router.post('/api/addMaterial', storageController.addMaterial);
 router.post('/api/addStorage', storageController.addStorage);
 router.post('/api/getImportedInfo', storageController.getImportedInfo);
-router.post('/api/deleteImported', storageController.deleteImported);
-router.post('/api/getUsedMaterial', storageController.getUsedMaterial);
 router.post('/api/getCostData', storageController.getCostData);
 router.post('/api/addNewCost', storageController.addNewCost);
 router.post('/api/deleteCost', storageController.deleteCost);
 router.post('/api/updateStorage', storageController.updateStorage);
-
+router.post('/api/getImportedInDay', storageController.getImportedInDay);
+router.post('/api/getUsedInDay', storageController.getUsedInDay);
 
 //order api
 router.post('/api/getOrderRealTime', orderController.getOrderRealTime);
@@ -85,6 +86,7 @@ router.post('/api/getOrderHistory', orderController.getOrderHistory);
 router.post('/api/deleteOrder', orderController.deleteOrder);
 router.post('/api/getBarChartData', orderController.getBarChartData);
 router.post('/api/getLineChartData', orderController.getLineChartData);
+router.post('/api/getProcessingItem', orderController.getProcessingItem);
 
 
 module.exports = router;

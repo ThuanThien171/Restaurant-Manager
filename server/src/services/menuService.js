@@ -1,5 +1,6 @@
 const db = require('../models/index');
 const sequelize = require('sequelize');
+const { Op } = require("sequelize");
 const { QueryTypes } = require('sequelize');
 
 let getAllMenu = (id) => {
@@ -64,6 +65,7 @@ let postNewMenu = (newMenu) => {
                     image: newMenu.image,
                     status: newMenu.status,
                     price: newMenu.price,
+                    process: newMenu.process
                 });
                 if (newMenu.costData != '[]') {
                     console.log(newMenu.costData);
@@ -176,6 +178,7 @@ let updateMenu = (data) => {
                     menu.image = data.image;
                     menu.status = data.status;
                     menu.price = data.price;
+                    menu.process = data.process;
                     await menu.save();
                     result.errCode = 0;
                     result.errMessage = "OK!";
@@ -260,4 +263,49 @@ let addTable = (areaID, tableName) => {
     })
 }
 
-module.exports = { getAllMenu, deleteOneMenu, postNewMenu, getMenuDetail, updateMenu, changeStatusMenu };
+let getDataTable = (resID,fromDate, toDate) => {
+    return new Promise(async (resolve,reject) => {
+        try {
+            let menus = await db.Menu.findAll({
+                where: { restaurantID: resID },
+                attributes: {
+                    exclude:['image','status','createdAt', 'updatedAt'],
+                    include: [
+                        [sequelize.fn('sum', sequelize.col('Items.itemNumber')), 'totalNumber'],
+                    ],
+                },
+                include: {
+                    model: db.Item,
+                    attributes:[],
+                    where: {
+                        updatedAt: {
+                          [Op.between]: [fromDate, `${toDate} 23:59:59`]
+                        },
+                        status: 1,
+                    },
+                    include: {
+                        model: db.Order,
+                        attributes:[],
+                        where: {status: 1},
+                    },
+                    required: false
+                },
+                group: ['id'],
+                raw: true,
+                nest: true,
+                
+            })
+            let result = {
+                errCode : 0,
+                errMessage : "OK!",
+                data: menus
+            }
+
+            resolve(result)
+        }catch(e){
+            reject(e);
+        }
+    })
+}
+
+module.exports = { getAllMenu, deleteOneMenu, postNewMenu, getMenuDetail, updateMenu, changeStatusMenu, getDataTable };

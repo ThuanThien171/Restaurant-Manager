@@ -7,6 +7,8 @@ import moment from "moment-timezone";
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 
+import DataTableComponent from 'components/Tables/DataTable';
+
 import axios from "axios";
 import { Separator } from "components/Separator/Separator";
 // Chakra imports
@@ -262,7 +264,8 @@ export default function BusinessChart() {
                                 </Flex>
                                 <Separator />
 
-                                <LineChart restaurantID={userInfo.restaurantID} />
+                                {/* <LineChart restaurantID={userInfo.restaurantID} /> */}
+                                <DataTableComponent/>
 
                             </CardBody>
                         </TabPanel>
