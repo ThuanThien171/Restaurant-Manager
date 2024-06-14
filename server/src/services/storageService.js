@@ -178,12 +178,17 @@ let getImportedInfo = (id,start,end) => {
                         [Op.between]: [start, `${end} 23:59:59`]
                     },
                 },
+                attributes:{
+                    include:[
+                        [sequelize.fn('CONVERT_TZ', sequelize.col('updatedAt'), '+00:00', '+07:00'),'day']
+                    ]
+                },
                 order: [
                     ['updatedAt', 'DESC'],
                 ],
                 raw: true,
             })
-            let date = new Date(lastCheck.updatedAt);
+            let date = new Date(lastCheck.day);
             let month = date.getMonth()+1;
             let day = date.getDate();
             let hour = date.getHours()+7;
