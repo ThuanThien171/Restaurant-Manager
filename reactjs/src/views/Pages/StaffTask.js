@@ -150,9 +150,10 @@ export default function StaffTask() {
 										md: "calc(50% - 10px)",
 										sm: "calc(100% - 10px)",
 									}}
-                                    h={{sm:"20vw", md:"10vw"}}
+                                    h={"auto"}
 									style={{ border: "1px outset #38B2AC" }}
 									borderRadius="10px"
+									padding={'5px 0'}
 									>
 
 										<Flex

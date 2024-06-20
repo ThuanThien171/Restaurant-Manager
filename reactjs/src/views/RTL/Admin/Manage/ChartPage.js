@@ -215,7 +215,7 @@ export default function BusinessChart() {
     }
 
     return (
-        <div style={{ margin: '60px 0px 0px 0px' }}>
+        <div style={{ margin: '70px 0px 0px 0px' }}>
 
             <Card overflowX={{ xl: "hidden" }}>
 

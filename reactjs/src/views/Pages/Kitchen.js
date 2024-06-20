@@ -78,6 +78,14 @@ function Kitchen() {
 				icon: "success",
 				button: "OK!",
 			})
+		}else {
+			getKitchenInfo();
+			swal({
+				title: "Lỗi!",
+				text: res.data.errMessage,
+				icon: "error",
+				button: "OK!",
+			})
 		}
 	}
 
